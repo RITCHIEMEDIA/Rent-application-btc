@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Test Edge Function</title>
+</head>
+<body>
+    <h1>Test create-payment Edge Function</h1>
+    <button onclick="testFunction()">Test Function</button>
+    <pre id="output"></pre>
+
+    <script type="module">
+        import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm';
+
+        const supabase = createClient(
+            'https://cmjihhcoxchqtqwkwdms.supabase.co',
+            'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNtamloaGNveGNocXRxd2t3ZG1zIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjA4MTY4MzIsImV4cCI6MjA3NjM5MjgzMn0.FMi5hyXYHLBAT15AZfm3K4S0jDH2Ua4o5xJBKpXpRo0'
+        );
+
+        window.testFunction = async function() {
+            const output = document.getElementById('output');
+            output.textContent = 'Testing...';
+
+            try {
+                // First, create a test application
+                const { data: appData, error: appError } = await supabase
+                    .from('applications')
+                    .insert({
+                        first_name: 'Test',
+                        last_name: 'User',
+                        phone: '1234567890',
+                        email: 'test@example.com',
+                        address: { street: '123 Test St', city: 'Test City', state: 'TS', postalCode: '12345' },
+                        dob: '1990-01-01',
+                        num_applicants: 1,
+                        pets: 0,
+                        ssn_encrypted: '1234',
+                        income: 50000,
+                        deposit_amount: 1000,
+                        property_address: { street: '456 Property St', city: 'Property City', state: 'PS', postalCode: '67890' }
+                    })
+                    .select()
+                    .single();
+
+                if (appError) {
+                    output.textContent = 'Error creating test application:\n' + JSON.stringify(appError, null, 2);
+                    return;
+                }
+
+                output.textContent = 'Test application created:\n' + JSON.stringify(appData, null, 2);
+
+                // Now test the create-payment function
+                const { data, error } = await supabase.functions.invoke('create-payment', {
+                    body: { tempId: appData.temp_id }
+                });
+
+                output.textContent += '\n\n--- create-payment response ---\n';
+                output.textContent += 'Data: ' + JSON.stringify(data, null, 2) + '\n';
+                output.textContent += 'Error: ' + JSON.stringify(error, null, 2);
+
+            } catch (err) {
+                output.textContent = 'Caught error:\n' + err.toString() + '\n\n' + JSON.stringify(err, null, 2);
+            }
+        };
+    </script>
+</body>
+</html>

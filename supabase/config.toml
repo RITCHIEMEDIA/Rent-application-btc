@@ -1,0 +1,10 @@
+project_id = "cmjihhcoxchqtqwkwdms"
+
+[functions.create-payment]
+verify_jwt = false
+
+[functions.payment-status]
+verify_jwt = false
+
+[functions.submit-application]
+verify_jwt = false
