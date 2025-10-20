@@ -195,19 +195,34 @@ const FaceCapture = () => {
       }
 
       const formData = JSON.parse(formDataString);
+      const { supabase } = await import('@/integrations/supabase/client');
       
-      // Convert video blob to base64
-      const reader = new FileReader();
-      reader.readAsDataURL(recordedVideo);
-      await new Promise((resolve) => {
-        reader.onloadend = () => {
-          formData.faceImage = reader.result;
-          resolve(null);
-        };
-      });
+      // Upload video to Supabase Storage instead of base64 encoding
+      const fileName = `face-video-${Date.now()}-${Math.random().toString(36).substring(7)}.webm`;
+      toast.info('Uploading face verification video...');
+      
+      const { data: uploadData, error: uploadError } = await supabase.storage
+        .from('faces')
+        .upload(fileName, recordedVideo, {
+          contentType: 'video/webm',
+          upsert: false
+        });
+
+      if (uploadError) {
+        console.error('Upload error:', uploadError);
+        throw new Error('Failed to upload verification video');
+      }
+
+      // Get public URL of the uploaded video
+      const { data: { publicUrl } } = supabase.storage
+        .from('faces')
+        .getPublicUrl(fileName);
+
+      // Pass video URL instead of base64 data
+      formData.faceVideoUrl = publicUrl;
 
       // Submit application to backend
-      const { supabase } = await import('@/integrations/supabase/client');
+      toast.info('Submitting application...');
       const { data, error } = await supabase.functions.invoke('submit-application', {
         body: formData
       });

@@ -121,8 +121,15 @@ Deno.serve(async (req) => {
       }
     }
 
-    // Handle face image if provided
-    if (formData.faceImage && typeof formData.faceImage === 'string' && formData.faceImage.includes(',')) {
+    // Handle face image or video URL if provided
+    if (formData.faceVideoUrl && typeof formData.faceVideoUrl === 'string') {
+      // Store the face video URL directly
+      await supabaseClient
+        .from('applications')
+        .update({ face_image_url: formData.faceVideoUrl })
+        .eq('id', application.id)
+    } else if (formData.faceImage && typeof formData.faceImage === 'string' && formData.faceImage.includes(',')) {
+      // Fallback to base64 image handling for backward compatibility
       try {
         const faceBuffer = Uint8Array.from(atob(formData.faceImage.split(',')[1]), c => c.charCodeAt(0))
         const { error: uploadError } = await supabaseClient.storage
