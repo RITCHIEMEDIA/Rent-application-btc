@@ -11,6 +11,7 @@ type RecordingStep = 'idle' | 'countdown' | 'left' | 'right' | 'up' | 'complete'
 const FaceCapture = () => {
   const navigate = useNavigate();
   const videoRef = useRef<HTMLVideoElement>(null);
+  const previewVideoRef = useRef<HTMLVideoElement>(null);
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
   const chunksRef = useRef<Blob[]>([]);
   const [stream, setStream] = useState<MediaStream | null>(null);
@@ -33,6 +34,10 @@ const FaceCapture = () => {
 
     return () => {
       stopCamera();
+      // Clean up video URL on unmount
+      if (recordedVideoURL) {
+        URL.revokeObjectURL(recordedVideoURL);
+      }
     };
   }, [navigate]);
 
@@ -94,6 +99,18 @@ const FaceCapture = () => {
         setRecordedVideo(blob);
         const url = URL.createObjectURL(blob);
         setRecordedVideoURL(url);
+        
+        // Set the preview video source and play
+        setTimeout(() => {
+          if (previewVideoRef.current) {
+            previewVideoRef.current.src = url;
+            previewVideoRef.current.load();
+            previewVideoRef.current.play().catch(err => {
+              console.error('Error playing preview:', err);
+            });
+          }
+        }, 100);
+        
         stopCamera();
       };
 
@@ -152,6 +169,11 @@ const FaceCapture = () => {
   };
 
   const retake = () => {
+    // Clean up old video URL
+    if (recordedVideoURL) {
+      URL.revokeObjectURL(recordedVideoURL);
+    }
+    
     setRecordedVideo(null);
     setRecordedVideoURL(null);
     setRecordingStep('idle');
@@ -280,9 +302,20 @@ const FaceCapture = () => {
               </>
             ) : (
               <video
+                ref={previewVideoRef}
                 src={recordedVideoURL}
                 controls
+                autoPlay
+                loop
+                playsInline
                 className="w-full h-full object-cover"
+                onLoadedData={() => {
+                  console.log('Video loaded successfully');
+                }}
+                onError={(e) => {
+                  console.error('Video playback error:', e);
+                  toast.error('Error playing video preview');
+                }}
               />
             )}
           </div>
