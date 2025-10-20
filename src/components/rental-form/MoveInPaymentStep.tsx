@@ -34,19 +34,22 @@ export const MoveInPaymentStep = ({ formData, updateFormData }: MoveInPaymentSte
         />
       </div>
 
-      {/* Security Deposit */}
+      {/* Deposit Amount - How much to pay */}
       <div>
-        <Label htmlFor="securityDepositAmount">How much do you have at hand to secure the property? *</Label>
+        <Label htmlFor="depositAmount">Deposit Amount (USD) *</Label>
         <Input
-          id="securityDepositAmount"
+          id="depositAmount"
           type="number"
           min="0"
           step="0.01"
-          placeholder="Enter amount in USD"
+          placeholder="Enter deposit amount (e.g., 1000)"
           value={formData.securityDepositAmount}
           onChange={(e) => updateFormData("securityDepositAmount", e.target.value)}
           required
         />
+        <p className="text-xs text-muted-foreground mt-1">
+          This is the amount you will pay for the security deposit
+        </p>
       </div>
 
       {/* Date to Pay Deposit */}

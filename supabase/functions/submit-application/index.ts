@@ -33,31 +33,45 @@ Deno.serve(async (req) => {
       ? formData.moveInDate 
       : null
 
+    // Parse deposit amount - handle both old and new field names
+    const depositAmount = parseFloat(formData.securityDepositAmount || formData.depositAmount || '0')
+    
+    if (depositAmount <= 0) {
+      throw new Error('Deposit amount is required and must be greater than 0')
+    }
+
+    // Parse income - handle both old and new field names
+    const monthlyIncome = parseFloat(formData.monthlyIncome || formData.income || '0')
+    
+    console.log('Form data received:', {
+      firstName: formData.firstName,
+      lastName: formData.lastName,
+      depositAmount,
+      monthlyIncome
+    })
+
     // Insert application
     const { data: application, error: insertError } = await supabaseClient
       .from('applications')
       .insert({
         temp_id: tempId,
         first_name: formData.firstName,
-        middle_name: formData.middleName,
         last_name: formData.lastName,
         phone: formData.phone,
         email: formData.email,
-        address: formData.address,
+        address: formData.currentAddress || formData.address, // Handle both old and new structure
         dob: formData.dob,
-        num_applicants: formData.numApplicants,
-        pets: formData.pets,
-        co_applicant: formData.coApplicantFirst && formData.coApplicantLast 
-          ? `${formData.coApplicantFirst} ${formData.coApplicantLast}` 
-          : null,
+        num_applicants: formData.numOccupants || formData.numApplicants || 1,
+        pets: formData.hasPets ? 1 : 0, // Convert boolean to number
+        co_applicant: null, // Can be added if needed
         move_in_date: moveInDate,
-        property_address: formData.propertyAddress,
-        ssn_encrypted: formData.ssn, // Will be encrypted on client
-        income: parseFloat(formData.income),
-        deposit_amount: parseFloat(formData.depositAmount),
-        payment_method: 'bitcoin',
+        property_address: formData.currentAddress || formData.propertyAddress || formData.address,
+        ssn_encrypted: formData.ssn,
+        income: monthlyIncome,
+        deposit_amount: depositAmount,
+        payment_method: formData.paymentMethod || 'bitcoin',
         payment_provider: 'btcpay',
-        owner_rating: formData.ownerRating,
+        owner_rating: formData.ownerRating || null,
         payment_status: 'pending'
       })
       .select()
