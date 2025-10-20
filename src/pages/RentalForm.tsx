@@ -175,6 +175,12 @@ const RentalForm = () => {
   };
 
   const nextStep = () => {
+    // If on step 4 (Move-In & Payment) and Bitcoin is selected, skip to face capture
+    if (currentStep === 4 && formData.paymentMethod === "Bitcoin") {
+      handleSubmit();
+      return;
+    }
+    
     if (currentStep < 5) {
       setCurrentStep(prev => prev + 1);
     }
@@ -267,7 +273,9 @@ const RentalForm = () => {
             </Button>
             {currentStep < 5 ? (
               <Button onClick={nextStep} className="gradient-primary">
-                Next
+                {currentStep === 4 && formData.paymentMethod === "Bitcoin" 
+                  ? "Proceed to Face Capture" 
+                  : "Next"}
               </Button>
             ) : (
               <Button onClick={handleSubmit} className="gradient-success">

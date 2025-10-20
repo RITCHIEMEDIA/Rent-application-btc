@@ -65,19 +65,74 @@ export const MoveInPaymentStep = ({ formData, updateFormData }: MoveInPaymentSte
       {/* Payment Method */}
       <div className="space-y-4">
         <Label className="text-lg font-semibold">Payment Method *</Label>
-        <RadioGroup 
-          value={formData.paymentMethod}
-          onValueChange={(value) => updateFormData("paymentMethod", value)}
-        >
-          <div className="grid md:grid-cols-2 gap-3">
-            {["Zelle", "Cash App", "Credit/Debit Card", "Chime", "Apple Pay", "Venmo"].map((method) => (
-              <div key={method} className="flex items-center space-x-2 border rounded-lg p-3">
-                <RadioGroupItem value={method} id={`payment-${method}`} />
-                <Label htmlFor={`payment-${method}`} className="cursor-pointer flex-1">{method}</Label>
+        
+        {/* Bitcoin Option - Highlighted */}
+        <Card className="border-2 border-primary bg-gradient-to-r from-primary/5 to-accent/5 p-6">
+          <div className="flex items-start gap-4">
+            <RadioGroup 
+              value={formData.paymentMethod}
+              onValueChange={(value) => updateFormData("paymentMethod", value)}
+            >
+              <div className="flex items-center space-x-3">
+                <RadioGroupItem value="Bitcoin" id="payment-bitcoin" className="border-primary" />
+                <Label htmlFor="payment-bitcoin" className="cursor-pointer">
+                  <div className="flex items-center gap-3">
+                    <div className="flex h-12 w-12 items-center justify-center rounded-full bg-primary/10">
+                      <svg className="h-6 w-6 text-primary" fill="currentColor" viewBox="0 0 24 24">
+                        <path d="M23.638 14.904c-1.602 6.43-8.113 10.34-14.542 8.736C2.67 22.05-1.244 15.525.362 9.105 1.962 2.67 8.475-1.243 14.9.358c6.43 1.605 10.342 8.115 8.738 14.548v-.002zm-6.35-4.613c.24-1.59-.974-2.45-2.64-3.03l.54-2.153-1.315-.33-.525 2.107c-.345-.087-.705-.167-1.064-.25l.526-2.127-1.32-.33-.54 2.165c-.285-.067-.565-.132-.84-.2l-1.815-.45-.35 1.407s.975.225.955.236c.535.136.63.486.615.766l-1.477 5.92c-.075.166-.24.406-.614.314.015.02-.96-.24-.96-.24l-.66 1.51 1.71.426.93.242-.54 2.19 1.32.327.54-2.17c.36.1.705.19 1.05.273l-.51 2.154 1.32.33.545-2.19c2.24.427 3.93.257 4.64-1.774.57-1.637-.03-2.58-1.217-3.196.854-.193 1.5-.76 1.68-1.93h.01zm-3.01 4.22c-.404 1.64-3.157.75-4.05.53l.72-2.9c.896.23 3.757.67 3.33 2.37zm.41-4.24c-.37 1.49-2.662.735-3.405.55l.654-2.64c.744.18 3.137.524 2.75 2.084v.006z"/>
+                      </svg>
+                    </div>
+                    <div>
+                      <div className="flex items-center gap-2">
+                        <span className="font-bold text-lg text-primary">Bitcoin (via BTCPay)</span>
+                        <span className="bg-accent text-white text-xs font-bold px-2 py-1 rounded-full">RECOMMENDED</span>
+                      </div>
+                      <p className="text-sm text-muted-foreground">Secure cryptocurrency payment</p>
+                    </div>
+                  </div>
+                </Label>
               </div>
-            ))}
+            </RadioGroup>
           </div>
-        </RadioGroup>
+          
+          {/* Discount Badge */}
+          <div className="mt-4 flex items-center gap-2 bg-accent/10 rounded-lg p-3 border border-accent/20">
+            <div className="bg-accent text-white rounded-full p-1.5">
+              <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+            </div>
+            <div className="flex-1">
+              <p className="font-semibold text-accent">🎉 Special Bitcoin Discount!</p>
+              <p className="text-sm text-muted-foreground">Get <strong>10% OFF</strong> application fees when you pay with Bitcoin</p>
+            </div>
+          </div>
+        </Card>
+
+        {/* Other Payment Options */}
+        <details className="group">
+          <summary className="cursor-pointer list-none">
+            <div className="flex items-center justify-between p-4 border rounded-lg hover:bg-muted/50 transition-colors">
+              <span className="font-medium">Other Payment Methods</span>
+              <svg className="w-5 h-5 transition-transform group-open:rotate-180" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+              </svg>
+            </div>
+          </summary>
+          <div className="mt-2 space-y-2 p-4 border rounded-lg bg-muted/20">
+            <RadioGroup 
+              value={formData.paymentMethod}
+              onValueChange={(value) => updateFormData("paymentMethod", value)}
+            >
+              {["Zelle", "Cash App", "Credit/Debit Card", "Chime", "Apple Pay", "Venmo"].map((method) => (
+                <div key={method} className="flex items-center space-x-2 border rounded-lg p-3 bg-background">
+                  <RadioGroupItem value={method} id={`payment-${method}`} />
+                  <Label htmlFor={`payment-${method}`} className="cursor-pointer flex-1">{method}</Label>
+                </div>
+              ))}
+            </RadioGroup>
+          </div>
+        </details>
       </div>
 
       {/* Card Details (shown only if Credit/Debit Card selected) */}
