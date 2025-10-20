@@ -4,48 +4,85 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { PersonalInfoStep } from "@/components/rental-form/PersonalInfoStep";
 import { PropertyInfoStep } from "@/components/rental-form/PropertyInfoStep";
-import { DocumentsStep } from "@/components/rental-form/DocumentsStep";
+import { AddressHistoryStep } from "@/components/rental-form/AddressHistoryStep";
+import { MoveInPaymentStep } from "@/components/rental-form/MoveInPaymentStep";
 import { ReviewStep } from "@/components/rental-form/ReviewStep";
 import { toast } from "sonner";
 import { Check } from "lucide-react";
 
+export type OccupantInfo = {
+  name: string;
+  relationship: string;
+  age: string;
+  gender: string;
+};
+
 export type FormData = {
   // Personal Info
   firstName: string;
-  middleName: string;
   lastName: string;
   phone: string;
   email: string;
-  address: {
-    street: string;
-    city: string;
-    state: string;
-    postalCode: string;
-    country: string;
-  };
-  dob: string;
-  numApplicants: number;
-  pets: number;
-  coApplicantFirst: string;
-  coApplicantLast: string;
-  moveInDate: string;
-  
-  // Property & Financial
-  propertyAddress: {
-    street: string;
-    city: string;
-    state: string;
-    postalCode: string;
-  };
   ssn: string;
-  income: string;
-  depositAmount: string;
-  paymentMethod: string;
-  ownerRating: number;
+  dob: string;
   
-  // Documents
-  idFront: File | null;
-  idBack: File | null;
+  // Vehicle Info
+  hasVehicle: boolean;
+  
+  // Employment Info
+  occupation: string;
+  companyName: string;
+  department: string;
+  monthlyIncome: string;
+  annualIncome: string;
+  
+  // Drivers License
+  licenseFront: File | null;
+  licenseBack: File | null;
+  
+  // Occupants
+  numOccupants: number;
+  occupants: OccupantInfo[];
+  
+  // Pets
+  hasPets: boolean;
+  
+  // Current Address
+  currentAddress: {
+    street: string;
+    street2: string;
+    city: string;
+    state: string;
+    postalCode: string;
+  };
+  durationOfOccupancy: string;
+  reasonForLeaving: string;
+  
+  // Previous Landlord
+  previousLandlordFirstName: string;
+  previousLandlordLastName: string;
+  previousLandlordPhone: string;
+  
+  // Legal Questions
+  beenEvicted: boolean;
+  convictedOfCrime: boolean;
+  convictedOfFelony: boolean;
+  
+  // Move In Details
+  moveInDate: string;
+  securityDepositAmount: string;
+  dateToPayDeposit: string;
+  
+  // Payment Method
+  paymentMethod: string;
+  
+  // Card Details (for credit/debit)
+  cardHolderName: string;
+  cardNumber: string;
+  cardExpDate: string;
+  cardZipCode: string;
+  cardCVC: string;
+  billingAddress: string;
   
   // Face capture
   faceImage: string | null;
@@ -53,46 +90,83 @@ export type FormData = {
 
 const steps = [
   { id: 1, name: "Personal Information" },
-  { id: 2, name: "Property & Financial" },
-  { id: 3, name: "Documents" },
-  { id: 4, name: "Review & Submit" },
+  { id: 2, name: "Employment & Income" },
+  { id: 3, name: "Current Address & History" },
+  { id: 4, name: "Move-In & Payment" },
+  { id: 5, name: "Review & Submit" },
 ];
 
 const RentalForm = () => {
   const navigate = useNavigate();
   const [currentStep, setCurrentStep] = useState(1);
   const [formData, setFormData] = useState<FormData>({
+    // Personal Info
     firstName: "",
-    middleName: "",
     lastName: "",
     phone: "",
     email: "",
-    address: {
-      street: "",
-      city: "",
-      state: "",
-      postalCode: "",
-      country: "",
-    },
-    dob: "",
-    numApplicants: 1,
-    pets: 0,
-    coApplicantFirst: "",
-    coApplicantLast: "",
-    moveInDate: "",
-    propertyAddress: {
-      street: "",
-      city: "",
-      state: "",
-      postalCode: "",
-    },
     ssn: "",
-    income: "",
-    depositAmount: "",
+    dob: "",
+    
+    // Vehicle
+    hasVehicle: false,
+    
+    // Employment
+    occupation: "",
+    companyName: "",
+    department: "",
+    monthlyIncome: "",
+    annualIncome: "",
+    
+    // Drivers License
+    licenseFront: null,
+    licenseBack: null,
+    
+    // Occupants
+    numOccupants: 1,
+    occupants: [],
+    
+    // Pets
+    hasPets: false,
+    
+    // Current Address
+    currentAddress: {
+      street: "",
+      street2: "",
+      city: "",
+      state: "",
+      postalCode: "",
+    },
+    durationOfOccupancy: "",
+    reasonForLeaving: "",
+    
+    // Previous Landlord
+    previousLandlordFirstName: "",
+    previousLandlordLastName: "",
+    previousLandlordPhone: "",
+    
+    // Legal Questions
+    beenEvicted: false,
+    convictedOfCrime: false,
+    convictedOfFelony: false,
+    
+    // Move In
+    moveInDate: "",
+    securityDepositAmount: "",
+    dateToPayDeposit: "",
+    
+    // Payment
     paymentMethod: "",
-    ownerRating: 0,
-    idFront: null,
-    idBack: null,
+    
+    // Card Details
+    cardHolderName: "",
+    cardNumber: "",
+    cardExpDate: "",
+    cardZipCode: "",
+    cardCVC: "",
+    billingAddress: "",
+    
+    // Face
     faceImage: null,
   });
 
@@ -101,7 +175,7 @@ const RentalForm = () => {
   };
 
   const nextStep = () => {
-    if (currentStep < 4) {
+    if (currentStep < 5) {
       setCurrentStep(prev => prev + 1);
     }
   };
@@ -173,9 +247,12 @@ const RentalForm = () => {
             <PropertyInfoStep formData={formData} updateFormData={updateFormData} />
           )}
           {currentStep === 3 && (
-            <DocumentsStep formData={formData} updateFormData={updateFormData} />
+            <AddressHistoryStep formData={formData} updateFormData={updateFormData} />
           )}
           {currentStep === 4 && (
+            <MoveInPaymentStep formData={formData} updateFormData={updateFormData} />
+          )}
+          {currentStep === 5 && (
             <ReviewStep formData={formData} />
           )}
 
@@ -188,7 +265,7 @@ const RentalForm = () => {
             >
               Previous
             </Button>
-            {currentStep < 4 ? (
+            {currentStep < 5 ? (
               <Button onClick={nextStep} className="gradient-primary">
                 Next
               </Button>
