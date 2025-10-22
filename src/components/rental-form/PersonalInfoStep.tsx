@@ -224,6 +224,51 @@ export const PersonalInfoStep = ({ formData, updateFormData }: PersonalInfoStepP
           </div>
         </RadioGroup>
       </div>
+
+      {/* Emergency Contact Section */}
+      <div className="pt-6 border-t">
+        <h3 className="text-xl font-semibold mb-4">Emergency Contact</h3>
+        <p className="text-sm text-muted-foreground mb-4">
+          Please provide an emergency contact person who can be reached in case of an emergency.
+        </p>
+        
+        <div className="space-y-4">
+          <div>
+            <Label htmlFor="emergencyContactName">Name *</Label>
+            <Input
+              id="emergencyContactName"
+              placeholder="Enter emergency contact name"
+              value={formData.emergencyContactName}
+              onChange={(e) => updateFormData("emergencyContactName", e.target.value)}
+              required
+            />
+          </div>
+          
+          <div className="grid md:grid-cols-2 gap-4">
+            <div>
+              <Label htmlFor="emergencyContactPhone">Phone Number *</Label>
+              <Input
+                id="emergencyContactPhone"
+                type="tel"
+                placeholder="(000) 000-0000"
+                value={formData.emergencyContactPhone}
+                onChange={(e) => updateFormData("emergencyContactPhone", e.target.value)}
+                required
+              />
+            </div>
+            <div>
+              <Label htmlFor="emergencyContactRelationship">Relationship *</Label>
+              <Input
+                id="emergencyContactRelationship"
+                placeholder="e.g., Parent, Spouse, Sibling"
+                value={formData.emergencyContactRelationship}
+                onChange={(e) => updateFormData("emergencyContactRelationship", e.target.value)}
+                required
+              />
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   );
 };

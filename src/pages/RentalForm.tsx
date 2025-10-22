@@ -26,6 +26,11 @@ export type FormData = {
   ssn: string;
   dob: string;
   
+  // Emergency Contact
+  emergencyContactName: string;
+  emergencyContactPhone: string;
+  emergencyContactRelationship: string;
+  
   // Vehicle Info
   hasVehicle: boolean;
   
@@ -84,6 +89,14 @@ export type FormData = {
   cardCVC: string;
   billingAddress: string;
   
+  // Additional Information
+  additionalInformation: string;
+  
+  // Certification
+  certificationName: string;
+  certificationPropertyAddress: string;
+  certificationAgreed: boolean;
+  
   // Face capture
   faceImage: string | null;
 };
@@ -107,6 +120,11 @@ const RentalForm = () => {
     email: "",
     ssn: "",
     dob: "",
+    
+    // Emergency Contact
+    emergencyContactName: "",
+    emergencyContactPhone: "",
+    emergencyContactRelationship: "",
     
     // Vehicle
     hasVehicle: false,
@@ -165,6 +183,14 @@ const RentalForm = () => {
     cardZipCode: "",
     cardCVC: "",
     billingAddress: "",
+    
+    // Additional Information
+    additionalInformation: "",
+    
+    // Certification
+    certificationName: "",
+    certificationPropertyAddress: "",
+    certificationAgreed: false,
     
     // Face
     faceImage: null,
@@ -259,7 +285,7 @@ const RentalForm = () => {
             <MoveInPaymentStep formData={formData} updateFormData={updateFormData} />
           )}
           {currentStep === 5 && (
-            <ReviewStep formData={formData} />
+            <ReviewStep formData={formData} updateFormData={updateFormData} />
           )}
 
           {/* Navigation Buttons */}

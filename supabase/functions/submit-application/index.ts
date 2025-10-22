@@ -72,7 +72,17 @@ Deno.serve(async (req) => {
         payment_method: formData.paymentMethod || 'bitcoin',
         payment_provider: 'btcpay',
         owner_rating: formData.ownerRating || null,
-        payment_status: 'pending'
+        payment_status: 'pending',
+        // Emergency Contact
+        emergency_contact_name: formData.emergencyContactName || null,
+        emergency_contact_phone: formData.emergencyContactPhone || null,
+        emergency_contact_relationship: formData.emergencyContactRelationship || null,
+        // Additional Information
+        additional_information: formData.additionalInformation || null,
+        // Certification
+        certification_name: formData.certificationName || null,
+        certification_property_address: formData.certificationPropertyAddress || null,
+        certification_agreed: formData.certificationAgreed || false
       })
       .select()
       .single()

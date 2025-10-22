@@ -1,7 +1,7 @@
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { Home, Shield, FileCheck, Camera, ArrowRight } from "lucide-react";
+import { Home, Shield, FileCheck, Camera, ArrowRight, DollarSign } from "lucide-react";
 
 const Index = () => {
   const navigate = useNavigate();
@@ -65,7 +65,7 @@ const Index = () => {
         </div>
 
         {/* How It Works */}
-        <div className="max-w-3xl mx-auto">
+        <div className="max-w-3xl mx-auto mb-12">
           <h2 className="text-3xl font-bold text-center mb-8">How It Works</h2>
           <div className="space-y-4">
             <div className="flex items-start gap-4 p-4 rounded-lg bg-card">
@@ -97,9 +97,9 @@ const Index = () => {
                 3
               </div>
               <div>
-                <h4 className="font-semibold mb-1">Face Verification</h4>
+                <h4 className="font-semibold mb-1">Face Verification Video</h4>
                 <p className="text-sm text-muted-foreground">
-                  Capture a selfie for biometric verification using your device's camera. This ensures the security of your application.
+                  Record a 7-second face verification video following on-screen instructions. This biometric verification ensures the security of your application.
                 </p>
               </div>
             </div>
@@ -109,13 +109,116 @@ const Index = () => {
                 4
               </div>
               <div>
-                <h4 className="font-semibold mb-1">Review & Submit</h4>
+                <h4 className="font-semibold mb-1">Pay Application Fee & Await Review</h4>
                 <p className="text-sm text-muted-foreground">
-                  View your completed application in your personal dashboard and track its status.
+                  Complete the $70 per adult application fee via Bitcoin payment. The fee is refundable if you're no longer interested or not qualified.
                 </p>
               </div>
             </div>
           </div>
+        </div>
+
+        {/* Application Process Information */}
+        <div className="max-w-3xl mx-auto mb-12">
+          <Card className="p-6">
+            <h2 className="text-2xl font-bold mb-4">Rental Application Process</h2>
+            <p className="text-muted-foreground mb-6">
+              Our comprehensive rental application form helps us get to know you better and conduct a thorough background check.
+            </p>
+
+            <div className="space-y-6">
+              {/* Application Fee */}
+              <div>
+                <h3 className="font-semibold text-lg mb-2 flex items-center gap-2">
+                  <DollarSign className="w-5 h-5 text-primary" />
+                  Application Fee Details
+                </h3>
+                <ul className="space-y-2 text-sm text-muted-foreground ml-7">
+                  <li className="flex items-start gap-2">
+                    <span className="text-accent mt-0.5">•</span>
+                    <span>$70 per adult applicant</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <span className="text-accent mt-0.5">•</span>
+                    <span>Refundable if you're no longer interested or not qualified</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <span className="text-accent mt-0.5">•</span>
+                    <span>Payment required to process your application</span>
+                  </li>
+                </ul>
+              </div>
+
+              {/* Review Process */}
+              <div>
+                <h3 className="font-semibold text-lg mb-2 flex items-center gap-2">
+                  <FileCheck className="w-5 h-5 text-primary" />
+                  Application Review Process
+                </h3>
+                <ul className="space-y-2 text-sm text-muted-foreground ml-7">
+                  <li className="flex items-start gap-2">
+                    <span className="text-accent mt-0.5">•</span>
+                    <span>We'll review your application and verify the information provided</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <span className="text-accent mt-0.5">•</span>
+                    <span>Background check will be conducted</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <span className="text-accent mt-0.5">•</span>
+                    <span>Approval notification will be sent once the review is complete</span>
+                  </li>
+                </ul>
+              </div>
+
+              {/* Next Steps */}
+              <div>
+                <h3 className="font-semibold text-lg mb-2 flex items-center gap-2">
+                  <Home className="w-5 h-5 text-primary" />
+                  Next Steps After Approval
+                </h3>
+                <ul className="space-y-2 text-sm text-muted-foreground ml-7">
+                  <li className="flex items-start gap-2">
+                    <span className="text-accent mt-0.5">•</span>
+                    <span>If you've viewed the home and decide to rent it, we'll proceed with the rental process</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <span className="text-accent mt-0.5">•</span>
+                    <span>You'll receive a lease contract outlining the terms and conditions</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <span className="text-accent mt-0.5">•</span>
+                    <span>Please review and sign the lease contract before moving in</span>
+                  </li>
+                </ul>
+              </div>
+
+              {/* Important Notes */}
+              <div className="bg-accent/10 border border-accent/20 rounded-lg p-4">
+                <h3 className="font-semibold text-lg mb-2 flex items-center gap-2">
+                  <Shield className="w-5 h-5 text-accent" />
+                  Important Notes
+                </h3>
+                <ul className="space-y-2 text-sm text-muted-foreground ml-7">
+                  <li className="flex items-start gap-2">
+                    <span className="text-accent mt-0.5">•</span>
+                    <span>Occupants listed on the application will be the same as those on the lease contract</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <span className="text-accent mt-0.5">•</span>
+                    <span>Ensure all information provided is accurate and truthful</span>
+                  </li>
+                </ul>
+              </div>
+            </div>
+
+            <div className="mt-6 pt-6 border-t text-center">
+              <p className="text-lg font-semibold text-primary mb-2">We're Looking Forward!</p>
+              <p className="text-sm text-muted-foreground">
+                Thank you for considering our home. We're excited to review your application and potentially welcome you as our tenant!
+              </p>
+            </div>
+          </Card>
         </div>
 
         {/* CTA */}
