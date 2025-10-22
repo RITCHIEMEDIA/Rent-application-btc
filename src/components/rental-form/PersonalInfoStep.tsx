@@ -94,7 +94,7 @@ export const PersonalInfoStep = ({ formData, updateFormData }: PersonalInfoStepP
       {/* SSN & DOB */}
       <div className="grid md:grid-cols-2 gap-4">
         <div>
-          <Label htmlFor="ssn">SSN *</Label>
+          <Label htmlFor="ssn">Social security Number (SSN) *</Label>
           <Input
             id="ssn"
             type="text"
