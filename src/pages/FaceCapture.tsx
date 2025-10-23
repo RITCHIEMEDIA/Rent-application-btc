@@ -281,17 +281,14 @@ const FaceCapture = () => {
             <div className="w-12 h-12 rounded-full gradient-primary flex items-center justify-center">
               <Camera className="w-6 h-6 text-white" />
             </div>
-            <h1 className="text-4xl md:text-5xl font-bold bg-gradient-primary bg-clip-text text-transparent">
+            <h1 className="text-4xl md:text-5xl font-bold bg-gradient-primary bg-clip-text">
               Face Verification
             </h1>
           </div>
           <p className="text-muted-foreground text-lg">
             Record a 15-second video following the on-screen instructions
           </p>
-          <div className="mt-4 inline-flex items-center gap-2 px-4 py-2 bg-accent/10 border border-accent/20 rounded-full">
-            <Smartphone className="w-4 h-4 text-accent" />
-            <span className="text-sm font-medium">Optimized for mobile devices</span>
-          </div>
+         
         </div>
 
         {/* Camera/Preview Card */}
