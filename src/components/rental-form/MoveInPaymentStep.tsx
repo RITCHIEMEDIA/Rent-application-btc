@@ -42,7 +42,7 @@ export const MoveInPaymentStep = ({ formData, updateFormData }: MoveInPaymentSte
           type="number"
           min="0"
           step="0.01"
-          placeholder="Enter deposit amount (e.g., 1000)"
+          placeholder="Enter deposit amount"
           value={formData.securityDepositAmount}
           onChange={(e) => updateFormData("securityDepositAmount", e.target.value)}
           required
@@ -219,23 +219,57 @@ export const MoveInPaymentStep = ({ formData, updateFormData }: MoveInPaymentSte
         </Card>
       )}
 
-      {/* Application Fee Notice */}
-      <div className="bg-muted/50 rounded-lg p-6 space-y-4">
+        <h2 className="text-2xl font-bold mb-2">RENTAL APPLICATION PPROCESS</h2>
+        <div className="bg-muted/50 rounded-lg p-6 space-y-4">
         <p className="text-sm leading-relaxed">
-          The questions on this application form helps us to know more about the applicant and run the background check. 
-          The application fees costs <strong>$70 per adult</strong> and your application will be on pending until the 
-          application fee has been paid to get approved, it's also very much refundable once you're no longer interested 
-          in renting our home or you are not qualified.
+          Our comprehensive rental application form helps us get to know you better and conduct a 
+          thorough background check. Here's what you need to know:
+          <h3 className="text-1xl font-bold mb-1">Application Fee Details:</h3>
+          <ul>
+            <li>1. <strong>$70 </strong>per adult</li>
+            <li>2. Refundable if you're no longer interested or not qualified</li>
+            <li>3. Payment required to process your application</li>
+          </ul>
         </p>
         <p className="text-sm leading-relaxed">
-          Once done with the application and approved, if you viewed the home already and decide to rent it then the 
-          landlord will proceed with the rental process and be sure to get your lease contract before you move in.
+          <h3 className="text-1xl font-bold mb-1">Application Review Process</h3>
+          <ul>
+            <li>1. We'll review your application and verify the information provided</li>
+            <li>2. Background check will be conducted</li>
+            <li>3. Approval notification will be sent once the review is complete</li>
+          </ul>
         </p>
         <p className="text-sm leading-relaxed">
-          Please note that the proposed occupant names on the application will be the same as on the lease contract. 
-          <strong> Thank You for your interest in our home.</strong>
+          <h3 className="text-1xl font-bold mb-1">Next Steps After Approval:</h3>
+          <ul>
+            <li>1. If you've viewed the home and decide to rent it, we'll proceed with the rental process</li>
+            <li>2. You'll receive a lease contract outlining the terms and conditions</li>
+            <li>3. Please review and sign the lease contract before moving in</li>
+          </ul>
         </p>
-      </div>
+        <p className="text-sm leading-relaxed">
+          <h3 className="text-1xl font-bold mb-1">Important Notes: </h3>
+          <ul>
+            <li>1. Occupants listed on the application will be the same as those on the lease contract</li>
+            <li>2. Ensure all information provided is accurate and truthful</li>
+          </ul>
+        </p>
+        <p className="text-sm leading-relaxed">
+
+        </p>
+        <p className="text-bm leading-relaxed">
+Thank you for considering our home. We're excited to review your application and potentially welcome you as our tenant!
+
+        </p>
+
+
+
+
+
+
+
+   
+    </div>
     </div>
   );
 };
