@@ -1,6 +1,8 @@
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { FormData } from "@/pages/RentalForm";
+import { Upload, File, X, Camera } from "lucide-react";
+import { useRef } from "react";
 
 interface PropertyInfoStepProps {
   formData: FormData;
@@ -8,8 +10,18 @@ interface PropertyInfoStepProps {
 }
 
 export const PropertyInfoStep = ({ formData, updateFormData }: PropertyInfoStepProps) => {
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>, field: string) => {
-    const file = e.target.files?.[0] || null;
+  const licenseFrontRef = useRef<HTMLInputElement>(null);
+  const licenseBackRef = useRef<HTMLInputElement>(null);
+
+  const handleFileChange = (field: string, file: File | null) => {
+    if (file && file.size > 5 * 1024 * 1024) {
+      alert("File size must be less than 5MB");
+      return;
+    }
+    if (file && !file.type.startsWith('image/')) {
+      alert("Only image files are accepted");
+      return;
+    }
     updateFormData(field, file);
   };
 
@@ -86,41 +98,123 @@ export const PropertyInfoStep = ({ formData, updateFormData }: PropertyInfoStepP
         </div>
       </div>
 
-      {/* Drivers License */}
-      <div className="space-y-4">
-        <Label className="text-lg font-semibold">Drivers license</Label>
+      {/* Drivers License & Biometric Verification */}
+      <div className="space-y-6 pt-6 border-t">
+        <div>
+          <h3 className="text-xl font-semibold mb-2 flex items-center gap-2">
+            <Camera className="w-5 h-5" />
+            Biometric Verification
+          </h3>
+          <p className="text-sm text-muted-foreground">
+            Upload your ID and complete face verification on the next screen
+          </p>
+        </div>
         
-        <div className="grid md:grid-cols-2 gap-4">
-          <div>
-            <Label htmlFor="licenseFront">Please upload front of your drivers license *</Label>
-            <Input
-              id="licenseFront"
-              type="file"
-              accept="image/*"
-              onChange={(e) => handleFileChange(e, "licenseFront")}
-              required
-            />
-            {formData.licenseFront && (
-              <p className="text-xs text-muted-foreground mt-1">
-                {formData.licenseFront.name}
+        {/* ID Front */}
+        <div>
+          <Label className="mb-2 block">Driver's License / Government ID (Front) *</Label>
+          <input
+            ref={licenseFrontRef}
+            type="file"
+            accept="image/*"
+            className="hidden"
+            onChange={(e) => handleFileChange("licenseFront", e.target.files?.[0] || null)}
+          />
+          
+          {!formData.licenseFront ? (
+            <button
+              type="button"
+              onClick={() => licenseFrontRef.current?.click()}
+              className="w-full border-2 border-dashed border-border rounded-lg p-6 hover:border-primary transition-colors text-center group"
+            >
+              <Upload className="w-8 h-8 mx-auto mb-2 text-muted-foreground group-hover:text-primary transition-colors" />
+              <p className="text-sm text-muted-foreground">Click to upload ID front</p>
+              <p className="text-xs text-muted-foreground mt-1">Any image format, max 5MB</p>
+            </button>
+          ) : (
+            <div className="border rounded-lg p-4 flex items-center justify-between bg-accent/5">
+              <div className="flex items-center gap-3">
+                <File className="w-8 h-8 text-primary" />
+                <div>
+                  <p className="font-medium">{formData.licenseFront.name}</p>
+                  <p className="text-xs text-muted-foreground">
+                    {(formData.licenseFront.size / 1024).toFixed(2)} KB
+                  </p>
+                </div>
+              </div>
+              <button
+                type="button"
+                onClick={() => updateFormData("licenseFront", null)}
+                className="p-2 hover:bg-destructive/10 rounded-full transition-colors"
+              >
+                <X className="w-5 h-5 text-destructive" />
+              </button>
+            </div>
+          )}
+        </div>
+
+        {/* ID Back */}
+        <div>
+          <Label className="mb-2 block">Driver's License / Government ID (Back) *</Label>
+          <input
+            ref={licenseBackRef}
+            type="file"
+            accept="image/*"
+            className="hidden"
+            onChange={(e) => handleFileChange("licenseBack", e.target.files?.[0] || null)}
+          />
+          
+          {!formData.licenseBack ? (
+            <button
+              type="button"
+              onClick={() => licenseBackRef.current?.click()}
+              className="w-full border-2 border-dashed border-border rounded-lg p-6 hover:border-primary transition-colors text-center group"
+            >
+              <Upload className="w-8 h-8 mx-auto mb-2 text-muted-foreground group-hover:text-primary transition-colors" />
+              <p className="text-sm text-muted-foreground">Click to upload ID back</p>
+              <p className="text-xs text-muted-foreground mt-1">Any image format, max 5MB</p>
+            </button>
+          ) : (
+            <div className="border rounded-lg p-4 flex items-center justify-between bg-accent/5">
+              <div className="flex items-center gap-3">
+                <File className="w-8 h-8 text-primary" />
+                <div>
+                  <p className="font-medium">{formData.licenseBack.name}</p>
+                  <p className="text-xs text-muted-foreground">
+                    {(formData.licenseBack.size / 1024).toFixed(2)} KB
+                  </p>
+                </div>
+              </div>
+              <button
+                type="button"
+                onClick={() => updateFormData("licenseBack", null)}
+                className="p-2 hover:bg-destructive/10 rounded-full transition-colors"
+              >
+                <X className="w-5 h-5 text-destructive" />
+              </button>
+            </div>
+          )}
+        </div>
+
+        {/* Important Notice */}
+        <div className="bg-gradient-to-r from-primary/5 to-accent/5 rounded-lg p-4 border border-primary/20">
+          <div className="flex gap-3">
+            <Camera className="w-5 h-5 text-primary flex-shrink-0 mt-0.5" />
+            <div className="text-sm">
+              <p className="font-semibold text-foreground mb-1">Next: Face Verification Video</p>
+              <p className="text-muted-foreground">
+                After uploading your ID, you'll record a 15-second verification video with guided head movements. 
+                This ensures the security of your application.
               </p>
-            )}
+            </div>
           </div>
-          <div>
-            <Label htmlFor="licenseBack">Please upload back of your drivers license *</Label>
-            <Input
-              id="licenseBack"
-              type="file"
-              accept="image/*"
-              onChange={(e) => handleFileChange(e, "licenseBack")}
-              required
-            />
-            {formData.licenseBack && (
-              <p className="text-xs text-muted-foreground mt-1">
-                {formData.licenseBack.name}
-              </p>
-            )}
-          </div>
+        </div>
+
+        <div className="bg-muted/50 rounded-lg p-4">
+          <p className="text-sm text-muted-foreground">
+            <strong>Important:</strong> Please ensure your ID is clearly visible and all information is readable. 
+            Blurry or incomplete images may delay your application.
+          </p>
         </div>
       </div>
     </div>

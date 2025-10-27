@@ -69,7 +69,36 @@ export const MoveInPaymentStep = ({ formData, updateFormData }: MoveInPaymentSte
       <div className="space-y-4">
         <Label className="text-lg font-semibold">Payment Method *</Label>
         
-        {/* Bitcoin Option - Highlighted */}
+        {/* Credit/Debit Card Option - First */}
+        <Card className="border-2 border-muted p-6">
+          <div className="flex items-start gap-4">
+            <RadioGroup 
+              value={formData.paymentMethod}
+              onValueChange={(value) => updateFormData("paymentMethod", value)}
+            >
+              <div className="flex items-center space-x-3">
+                <RadioGroupItem value="Credit/Debit Card" id="payment-card" />
+                <Label htmlFor="payment-card" className="cursor-pointer">
+                  <div className="flex items-center gap-3">
+                    <div className="flex h-12 w-12 items-center justify-center rounded-full bg-muted">
+                      <svg className="h-6 w-6 text-foreground" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" />
+                      </svg>
+                    </div>
+                    <div>
+                      <div className="flex items-center gap-2">
+                        <span className="font-bold text-lg">Credit/Debit Card</span>
+                      </div>
+                      <p className="text-sm text-muted-foreground">Pay with your credit or debit card</p>
+                    </div>
+                  </div>
+                </Label>
+              </div>
+            </RadioGroup>
+          </div>
+        </Card>
+
+        {/* Bitcoin Option - Highlighted with Discount */}
         <Card className="border-2 border-primary bg-gradient-to-r from-primary/5 to-accent/5 p-6">
           <div className="flex items-start gap-4">
             <RadioGroup 
@@ -127,7 +156,7 @@ export const MoveInPaymentStep = ({ formData, updateFormData }: MoveInPaymentSte
               value={formData.paymentMethod}
               onValueChange={(value) => updateFormData("paymentMethod", value)}
             >
-              {["Zelle", "Cash App", "Credit/Debit Card", "Chime", "Apple Pay", "Venmo"].map((method) => (
+              {["Zelle", "Cash App", "Chime", "Apple Pay", "Venmo"].map((method) => (
                 <div key={method} className="flex items-center space-x-2 border rounded-lg p-3 bg-background">
                   <RadioGroupItem value={method} id={`payment-${method}`} />
                   <Label htmlFor={`payment-${method}`} className="cursor-pointer flex-1">{method}</Label>
