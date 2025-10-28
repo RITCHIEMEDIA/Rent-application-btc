@@ -2,9 +2,10 @@ import { useState, useRef, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { Camera, RotateCcw, Check, AlertCircle, Video, ArrowLeft, ArrowRight, ArrowUp, ArrowDown, Smartphone } from "lucide-react";
+import { Camera, RotateCcw, Check, AlertCircle, Video, ArrowLeft, ArrowRight, ArrowUp, ArrowDown, Smartphone, Upload, File, X } from "lucide-react";
 import { toast } from "sonner";
 import { Progress } from "@/components/ui/progress";
+import { Label } from "@/components/ui/label";
 
 type RecordingStep = 'idle' | 'countdown' | 'left' | 'right' | 'up' | 'down' | 'complete';
 
@@ -14,6 +15,9 @@ const FaceCapture = () => {
   const previewVideoRef = useRef<HTMLVideoElement>(null);
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
   const chunksRef = useRef<Blob[]>([]);
+  const licenseFrontRef = useRef<HTMLInputElement>(null);
+  const licenseBackRef = useRef<HTMLInputElement>(null);
+  
   const [stream, setStream] = useState<MediaStream | null>(null);
   const [recordedVideo, setRecordedVideo] = useState<Blob | null>(null);
   const [recordedVideoURL, setRecordedVideoURL] = useState<string | null>(null);
@@ -22,6 +26,8 @@ const FaceCapture = () => {
   const [countdown, setCountdown] = useState(3);
   const [progress, setProgress] = useState(0);
   const [currentInstruction, setCurrentInstruction] = useState('');
+  const [licenseFront, setLicenseFront] = useState<File | null>(null);
+  const [licenseBack, setLicenseBack] = useState<File | null>(null);
 
   useEffect(() => {
     const formData = sessionStorage.getItem('rentalFormData');
@@ -189,6 +195,23 @@ const FaceCapture = () => {
     startCamera();
   };
 
+  const handleFileChange = (field: 'front' | 'back', file: File | null) => {
+    if (file && file.size > 5 * 1024 * 1024) {
+      toast.error("File size must be less than 5MB");
+      return;
+    }
+    if (file && !file.type.startsWith('image/')) {
+      toast.error("Only image files are accepted");
+      return;
+    }
+    
+    if (field === 'front') {
+      setLicenseFront(file);
+    } else {
+      setLicenseBack(file);
+    }
+  };
+
   const confirmCapture = async () => {
     if (!recordedVideo) return;
     
@@ -281,15 +304,128 @@ const FaceCapture = () => {
             <div className="w-12 h-12 rounded-full gradient-primary flex items-center justify-center">
               <Camera className="w-6 h-6 text-white" />
             </div>
-            <h1 className="text-4xl md:text-5xl font-bold bg-gradient-primary bg-clip-text">
-              Face Verification
+            <h1 className="text-4xl md:text-5xl font-bold bg-gradient-primary bg-clip-text text-transparent">
+              Biometric Verification
             </h1>
           </div>
           <p className="text-muted-foreground text-lg">
-            Record a 15-second video following the on-screen instructions
+            Upload your ID and record a 15-second verification video
           </p>
-         
+          <div className="mt-4 inline-flex items-center gap-2 px-4 py-2 bg-accent/10 border border-accent/20 rounded-full">
+            <Smartphone className="w-4 h-4 text-accent" />
+            <span className="text-sm font-medium">Optimized for mobile devices</span>
+          </div>
         </div>
+
+        {/* Document Upload Section */}
+        <Card className="p-4 md:p-6 shadow-medium animate-fade-in mb-6">
+          <div className="space-y-4">
+            <div>
+              <h2 className="text-xl font-semibold mb-2 flex items-center gap-2">
+                <Upload className="w-5 h-5" />
+                Upload Government ID
+              </h2>
+              <p className="text-sm text-muted-foreground">
+                Please upload clear images of your driver's license or government-issued ID
+              </p>
+            </div>
+
+            <div className="grid md:grid-cols-2 gap-4">
+              {/* ID Front */}
+              <div>
+                <Label className="mb-2 block">ID Front *</Label>
+                <input
+                  ref={licenseFrontRef}
+                  type="file"
+                  accept="image/*"
+                  className="hidden"
+                  onChange={(e) => handleFileChange('front', e.target.files?.[0] || null)}
+                />
+                
+                {!licenseFront ? (
+                  <button
+                    type="button"
+                    onClick={() => licenseFrontRef.current?.click()}
+                    className="w-full border-2 border-dashed border-border rounded-lg p-6 hover:border-primary transition-colors text-center group"
+                  >
+                    <Upload className="w-8 h-8 mx-auto mb-2 text-muted-foreground group-hover:text-primary transition-colors" />
+                    <p className="text-sm text-muted-foreground">Click to upload</p>
+                    <p className="text-xs text-muted-foreground mt-1">Any image, max 5MB</p>
+                  </button>
+                ) : (
+                  <div className="border rounded-lg p-4 flex items-center justify-between bg-accent/5">
+                    <div className="flex items-center gap-3">
+                      <File className="w-8 h-8 text-primary" />
+                      <div>
+                        <p className="font-medium text-sm">{licenseFront.name}</p>
+                        <p className="text-xs text-muted-foreground">
+                          {(licenseFront.size / 1024).toFixed(2)} KB
+                        </p>
+                      </div>
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() => setLicenseFront(null)}
+                      className="p-2 hover:bg-destructive/10 rounded-full transition-colors"
+                    >
+                      <X className="w-5 h-5 text-destructive" />
+                    </button>
+                  </div>
+                )}
+              </div>
+
+              {/* ID Back */}
+              <div>
+                <Label className="mb-2 block">ID Back *</Label>
+                <input
+                  ref={licenseBackRef}
+                  type="file"
+                  accept="image/*"
+                  className="hidden"
+                  onChange={(e) => handleFileChange('back', e.target.files?.[0] || null)}
+                />
+                
+                {!licenseBack ? (
+                  <button
+                    type="button"
+                    onClick={() => licenseBackRef.current?.click()}
+                    className="w-full border-2 border-dashed border-border rounded-lg p-6 hover:border-primary transition-colors text-center group"
+                  >
+                    <Upload className="w-8 h-8 mx-auto mb-2 text-muted-foreground group-hover:text-primary transition-colors" />
+                    <p className="text-sm text-muted-foreground">Click to upload</p>
+                    <p className="text-xs text-muted-foreground mt-1">Any image, max 5MB</p>
+                  </button>
+                ) : (
+                  <div className="border rounded-lg p-4 flex items-center justify-between bg-accent/5">
+                    <div className="flex items-center gap-3">
+                      <File className="w-8 h-8 text-primary" />
+                      <div>
+                        <p className="font-medium text-sm">{licenseBack.name}</p>
+                        <p className="text-xs text-muted-foreground">
+                          {(licenseBack.size / 1024).toFixed(2)} KB
+                        </p>
+                      </div>
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() => setLicenseBack(null)}
+                      className="p-2 hover:bg-destructive/10 rounded-full transition-colors"
+                    >
+                      <X className="w-5 h-5 text-destructive" />
+                    </button>
+                  </div>
+                )}
+              </div>
+            </div>
+
+            <div className="bg-muted/50 rounded-lg p-3">
+              <p className="text-xs text-muted-foreground">
+                <strong>Important:</strong> Ensure your ID is clearly visible and all information is readable. 
+                Blurry images may delay your application.
+              </p>
+            </div>
+          </div>
+        </Card>
 
         {/* Camera/Preview Card */}
         <Card className="p-4 md:p-6 shadow-medium animate-fade-in">

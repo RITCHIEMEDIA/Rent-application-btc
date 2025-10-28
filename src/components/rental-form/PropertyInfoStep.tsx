@@ -196,7 +196,7 @@ export const PropertyInfoStep = ({ formData, updateFormData }: PropertyInfoStepP
           )}
         </div>
 
-        {/* Important Notice */}
+        {/* Important Notice
         <div className="bg-gradient-to-r from-primary/5 to-accent/5 rounded-lg p-4 border border-primary/20">
           <div className="flex gap-3">
             <Camera className="w-5 h-5 text-primary flex-shrink-0 mt-0.5" />
@@ -208,7 +208,7 @@ export const PropertyInfoStep = ({ formData, updateFormData }: PropertyInfoStepP
               </p>
             </div>
           </div>
-        </div>
+        </div> */}
 
         <div className="bg-muted/50 rounded-lg p-4">
           <p className="text-sm text-muted-foreground">

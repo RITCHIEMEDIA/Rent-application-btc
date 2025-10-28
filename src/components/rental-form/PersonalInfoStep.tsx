@@ -144,13 +144,20 @@ export const PersonalInfoStep = ({ formData, updateFormData }: PersonalInfoStepP
         <Label htmlFor="numOccupants">Number of persons who will occupy the property *</Label>
         <Input
           id="numOccupants"
-          type="number"
-          min="1"
-          placeholder="e.g., 23"
+          type="text"
+          placeholder="e.g., 2 or two"
           value={formData.numOccupants}
-          onChange={(e) => updateFormData("numOccupants", parseInt(e.target.value) || 1)}
+          onChange={(e) => {
+            const value = e.target.value;
+            // Try to parse as number, otherwise keep as is
+            const parsed = parseInt(value);
+            updateFormData("numOccupants", isNaN(parsed) ? value : parsed);
+          }}
           required
         />
+        <p className="text-xs text-muted-foreground mt-1">
+          You can enter a number (e.g., 2)
+        </p>
       </div>
 
       {/* Other Occupants */}
