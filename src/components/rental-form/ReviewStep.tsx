@@ -1,4 +1,5 @@
 import { FormData } from "@/pages/RentalForm";
+import { FormData } from "@/pages/RentalForm";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { User, Home, DollarSign, FileText, CheckCircle, AlertCircle } from "lucide-react";
