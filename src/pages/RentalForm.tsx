@@ -41,9 +41,9 @@ export type FormData = {
   monthlyIncome: string;
   annualIncome: string;
   
-  // Drivers License
-  licenseFront: File | null;
-  licenseBack: File | null;
+  // Drivers License - Changed to support base64 strings
+  licenseFront: File | string | null;
+  licenseBack: File | string | null;
   
   // Occupants
   numOccupants: number;

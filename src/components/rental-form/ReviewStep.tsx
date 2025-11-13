@@ -1,5 +1,4 @@
 import { FormData } from "@/pages/RentalForm";
-import { FormData } from "@/pages/RentalForm";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { User, Home, DollarSign, FileText, CheckCircle, AlertCircle } from "lucide-react";
@@ -108,24 +107,40 @@ export const ReviewStep = ({ formData, updateFormData }: ReviewStepProps) => {
       </Card>
 
       {/* Documents */}
-      <Card className="p-4">
+      <Card className="p-3 sm:p-4">
         <div className="flex items-center gap-2 mb-3">
-          <FileText className="w-5 h-5 text-primary" />
-          <h3 className="font-semibold">Uploaded Documents</h3>
+          <FileText className="w-4 h-4 sm:w-5 sm:h-5 text-primary" />
+          <h3 className="font-semibold text-base sm:text-lg">Uploaded Documents</h3>
         </div>
         <div className="space-y-2">
-          <div className="flex items-center gap-2">
+          <div className="flex items-start gap-2">
             {formData.licenseFront ? (
-              <CheckCircle className="w-4 h-4 text-accent" />
+              <CheckCircle className="w-4 h-4 sm:w-5 sm:h-5 text-accent mt-0.5 flex-shrink-0" />
             ) : (
-              <AlertCircle className="w-4 h-4 text-muted-foreground" />
+              <AlertCircle className="w-4 h-4 sm:w-5 sm:h-5 text-muted-foreground mt-0.5 flex-shrink-0" />
             )}
-            <span className="text-sm">ID Front: {formData.licenseFront?.name || "Not uploaded"}</span>
+            <span className="text-sm">
+              ID Front: {
+                typeof formData.licenseFront === 'string' 
+                  ? "Captured" 
+                  : formData.licenseFront instanceof File 
+                    ? formData.licenseFront.name 
+                    : "Not uploaded"
+              }
+            </span>
           </div>
           {formData.licenseBack && (
-            <div className="flex items-center gap-2">
-              <CheckCircle className="w-4 h-4 text-accent" />
-              <span className="text-sm">ID Back: {formData.licenseBack.name}</span>
+            <div className="flex items-start gap-2">
+              <CheckCircle className="w-4 h-4 sm:w-5 sm:h-5 text-accent mt-0.5 flex-shrink-0" />
+              <span className="text-sm">
+                ID Back: {
+                  typeof formData.licenseBack === 'string' 
+                    ? "Captured" 
+                    : formData.licenseBack instanceof File 
+                      ? formData.licenseBack.name 
+                      : "Not uploaded"
+                }
+              </span>
             </div>
           )}
         </div>

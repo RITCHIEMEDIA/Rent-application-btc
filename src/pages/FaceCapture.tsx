@@ -1,5 +1,4 @@
 import { useState, useEffect, useRef } from "react";
-import { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
@@ -7,6 +6,7 @@ import { Camera, RotateCcw, Check, AlertCircle, Video, ArrowLeft, ArrowRight, Ar
 import { toast } from "sonner";
 import { Progress } from "@/components/ui/progress";
 import { Label } from "@/components/ui/label";
+import { IdPhotoCapture } from "@/components/rental-form/IdPhotoCapture";
 
 type RecordingStep = 'idle' | 'countdown' | 'left' | 'right' | 'up' | 'down' | 'complete';
 
@@ -29,6 +29,9 @@ const FaceCapture = () => {
   const [currentInstruction, setCurrentInstruction] = useState('');
   const [licenseFront, setLicenseFront] = useState<File | null>(null);
   const [licenseBack, setLicenseBack] = useState<File | null>(null);
+  // ID modal control
+  const [isIdModalOpen, setIsIdModalOpen] = useState(false);
+  const [currentIdSide, setCurrentIdSide] = useState<'front' | 'back'>('front');
 
   useEffect(() => {
     const formData = sessionStorage.getItem('rentalFormData');
@@ -213,6 +216,36 @@ const FaceCapture = () => {
     }
   };
 
+  // Convert dataURL from modal to File for preview/consistency
+  const dataURLToFile = async (dataUrl: string, filename: string) => {
+    const res = await fetch(dataUrl);
+    const blob = await res.blob();
+    return new File([blob], filename, { type: blob.type || 'image/jpeg' });
+  };
+
+  const openIdCamera = (side: 'front' | 'back') => {
+    setCurrentIdSide(side);
+    setIsIdModalOpen(true);
+  };
+
+  const handleIdCaptured = async (imageData: string) => {
+    const fname = `id-${currentIdSide}-${Date.now()}.jpg`;
+    const file = await dataURLToFile(imageData, fname);
+    if (currentIdSide === 'front') {
+      setLicenseFront(file);
+      // Auto-continue to back if not captured yet
+      if (!licenseBack) {
+        toast.info('Front captured. Now capture the BACK side.');
+        setCurrentIdSide('back');
+        setIsIdModalOpen(true);
+        return;
+      }
+    } else {
+      setLicenseBack(file);
+    }
+    setIsIdModalOpen(false);
+  };
+
   const confirmCapture = async () => {
     if (!recordedVideo) return;
     
@@ -305,17 +338,14 @@ const FaceCapture = () => {
             <div className="w-12 h-12 rounded-full gradient-primary flex items-center justify-center">
               <Camera className="w-6 h-6 text-white" />
             </div>
-            <h1 className="text-4xl md:text-5xl font-bold bg-gradient-primary bg-clip-text text-transparent">
+            <h1 className="text-lgs md:text-5xl font-bold bg-gradient-primary ">
               Biometric Verification
             </h1>
           </div>
           <p className="text-muted-foreground text-lg">
             Upload your ID and record a 15-second verification video
           </p>
-          <div className="mt-4 inline-flex items-center gap-2 px-4 py-2 bg-accent/10 border border-accent/20 rounded-full">
-            <Smartphone className="w-4 h-4 text-accent" />
-            <span className="text-sm font-medium">Optimized for mobile devices</span>
-          </div>
+        
         </div>
 
         {/* Document Upload Section */}
@@ -344,24 +374,25 @@ const FaceCapture = () => {
                 />
                 
                 {!licenseFront ? (
-                  <button
-                    type="button"
-                    onClick={() => licenseFrontRef.current?.click()}
-                    className="w-full border-2 border-dashed border-border rounded-lg p-6 hover:border-primary transition-colors text-center group"
-                  >
-                    <Upload className="w-8 h-8 mx-auto mb-2 text-muted-foreground group-hover:text-primary transition-colors" />
-                    <p className="text-sm text-muted-foreground">Click to upload</p>
-                    <p className="text-xs text-muted-foreground mt-1">Any image, max 5MB</p>
-                  </button>
+                  <div className="space-y-3">
+                    <button
+                      type="button"
+                      onClick={() => licenseFrontRef.current?.click()}
+                      className="w-full border-2 border-dashed border-border rounded-lg p-6 hover:border-primary transition-colors text-center group"
+                    >
+                      <Upload className="w-8 h-8 mx-auto mb-2 text-muted-foreground group-hover:text-primary transition-colors" />
+                      <p className="text-sm text-muted-foreground">Click to upload</p>
+                      <p className="text-xs text-muted-foreground mt-1">Any image, max 5MB</p>
+                    </button>
+                    <Button type="button" variant="secondary" className="w-full" onClick={() => openIdCamera('front')}>Take Photo</Button>
+                  </div>
                 ) : (
                   <div className="border rounded-lg p-4 flex items-center justify-between bg-accent/5">
                     <div className="flex items-center gap-3">
-                      <File className="w-8 h-8 text-primary" />
+                      <img src={URL.createObjectURL(licenseFront)} alt="ID front preview" className="w-16 h-10 object-cover rounded border" />
                       <div>
                         <p className="font-medium text-sm">{licenseFront.name}</p>
-                        <p className="text-xs text-muted-foreground">
-                          {(licenseFront.size / 1024).toFixed(2)} KB
-                        </p>
+                        <p className="text-xs text-muted-foreground">{(licenseFront.size / 1024).toFixed(2)} KB</p>
                       </div>
                     </div>
                     <button
@@ -387,24 +418,25 @@ const FaceCapture = () => {
                 />
                 
                 {!licenseBack ? (
-                  <button
-                    type="button"
-                    onClick={() => licenseBackRef.current?.click()}
-                    className="w-full border-2 border-dashed border-border rounded-lg p-6 hover:border-primary transition-colors text-center group"
-                  >
-                    <Upload className="w-8 h-8 mx-auto mb-2 text-muted-foreground group-hover:text-primary transition-colors" />
-                    <p className="text-sm text-muted-foreground">Click to upload</p>
-                    <p className="text-xs text-muted-foreground mt-1">Any image, max 5MB</p>
-                  </button>
+                  <div className="space-y-3">
+                    <button
+                      type="button"
+                      onClick={() => licenseBackRef.current?.click()}
+                      className="w-full border-2 border-dashed border-border rounded-lg p-6 hover:border-primary transition-colors text-center group"
+                    >
+                      <Upload className="w-8 h-8 mx-auto mb-2 text-muted-foreground group-hover:text-primary transition-colors" />
+                      <p className="text-sm text-muted-foreground">Click to upload</p>
+                      <p className="text-xs text-muted-foreground mt-1">Any image, max 5MB</p>
+                    </button>
+                    <Button type="button" variant="secondary" className="w-full" onClick={() => openIdCamera('back')}>Take Photo</Button>
+                  </div>
                 ) : (
                   <div className="border rounded-lg p-4 flex items-center justify-between bg-accent/5">
                     <div className="flex items-center gap-3">
-                      <File className="w-8 h-8 text-primary" />
+                      <img src={URL.createObjectURL(licenseBack)} alt="ID back preview" className="w-16 h-10 object-cover rounded border" />
                       <div>
                         <p className="font-medium text-sm">{licenseBack.name}</p>
-                        <p className="text-xs text-muted-foreground">
-                          {(licenseBack.size / 1024).toFixed(2)} KB
-                        </p>
+                        <p className="text-xs text-muted-foreground">{(licenseBack.size / 1024).toFixed(2)} KB</p>
                       </div>
                     </div>
                     <button
@@ -675,6 +707,7 @@ const FaceCapture = () => {
             Your video is securely encrypted and used only for identity verification purposes.
           </p>
         </div>
+        <IdPhotoCapture isOpen={isIdModalOpen} side={currentIdSide} onClose={() => setIsIdModalOpen(false)} onCapture={handleIdCaptured} />
       </div>
     </div>
   );
