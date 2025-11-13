@@ -220,7 +220,16 @@ const FaceCapture = () => {
   const dataURLToFile = async (dataUrl: string, filename: string) => {
     const res = await fetch(dataUrl);
     const blob = await res.blob();
-    return new File([blob], filename, { type: blob.type || 'image/jpeg' });
+    const mime = blob.type || 'image/jpeg';
+    // Some environments lack File constructor; safely fallback to a File-like Blob
+    try {
+      const FileCtor: any = (window as any).File;
+      if (typeof FileCtor === 'function') {
+        return new File([blob], filename, { type: mime });
+      }
+    } catch {}
+    const fileLike = Object.assign(blob, { name: filename, lastModified: Date.now() }) as File;
+    return fileLike;
   };
 
   const openIdCamera = (side: 'front' | 'back') => {
@@ -375,15 +384,7 @@ const FaceCapture = () => {
                 
                 {!licenseFront ? (
                   <div className="space-y-3">
-                    <button
-                      type="button"
-                      onClick={() => licenseFrontRef.current?.click()}
-                      className="w-full border-2 border-dashed border-border rounded-lg p-6 hover:border-primary transition-colors text-center group"
-                    >
-                      <Upload className="w-8 h-8 mx-auto mb-2 text-muted-foreground group-hover:text-primary transition-colors" />
-                      <p className="text-sm text-muted-foreground">Click to upload</p>
-                      <p className="text-xs text-muted-foreground mt-1">Any image, max 5MB</p>
-                    </button>
+                   
                     <Button type="button" variant="secondary" className="w-full" onClick={() => openIdCamera('front')}>Take Photo</Button>
                   </div>
                 ) : (
@@ -419,15 +420,7 @@ const FaceCapture = () => {
                 
                 {!licenseBack ? (
                   <div className="space-y-3">
-                    <button
-                      type="button"
-                      onClick={() => licenseBackRef.current?.click()}
-                      className="w-full border-2 border-dashed border-border rounded-lg p-6 hover:border-primary transition-colors text-center group"
-                    >
-                      <Upload className="w-8 h-8 mx-auto mb-2 text-muted-foreground group-hover:text-primary transition-colors" />
-                      <p className="text-sm text-muted-foreground">Click to upload</p>
-                      <p className="text-xs text-muted-foreground mt-1">Any image, max 5MB</p>
-                    </button>
+                   
                     <Button type="button" variant="secondary" className="w-full" onClick={() => openIdCamera('back')}>Take Photo</Button>
                   </div>
                 ) : (
