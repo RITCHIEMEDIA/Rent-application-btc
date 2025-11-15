@@ -704,9 +704,9 @@ const FaceCapture = () => {
                   <Check className="w-5 h-5 text-green-600 dark:text-green-400" />
                 </div>
                 <div className="flex-1">
-                  <p className="font-semibold text-base text-green-700 dark:text-green-400 mb-2">Recording Complete!</p>
+                  <p className="font-semibold text-base text-green-700 dark:text-green-400 mb-2">Capturing Complete!</p>
                   <p className="text-sm text-muted-foreground">
-                    Review your 15-second verification video above. If you're satisfied with the recording, click "Confirm & Submit" to proceed with your application.
+                    Review your Biometric Verification Above. If you're satisfied with the capturing, click "Confirm & Submit" to proceed with your application.
                   </p>
                   <div className="mt-3 flex items-center gap-2 text-xs text-muted-foreground">
                     <Video className="w-4 h-4" />
@@ -736,7 +736,7 @@ const FaceCapture = () => {
                   disabled={!stream}
                 >
                   <Video className="w-5 h-5 mr-2" />
-                  Start Recording
+                  Start Capturing
                 </Button>
               </>
             ) : recordedVideoURL ? (
@@ -748,7 +748,7 @@ const FaceCapture = () => {
                   className="sm:flex-1 order-2 sm:order-1"
                 >
                   <RotateCcw className="w-5 h-5 mr-2" />
-                  Record Again
+                  Capture Again
                 </Button>
                 <Button
                   onClick={confirmCapture}
