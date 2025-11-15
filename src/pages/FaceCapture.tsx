@@ -246,7 +246,7 @@ const FaceCapture = () => {
       setRecordingStep('complete');
       setCurrentInstruction('Recording complete!');
       setProgress(100);
-      toast.success('Face verification video recorded successfully!');
+      toast.success('Face verification recorded successfully!');
     }
   };
 
@@ -340,7 +340,7 @@ const FaceCapture = () => {
       
       // Upload video to Supabase Storage instead of base64 encoding
       const fileName = `face-video-${Date.now()}-${Math.random().toString(36).substring(7)}.webm`;
-      toast.info('Uploading face verification video...');
+      toast.info('Uploading face verification...');
       
       const { data: uploadData, error: uploadError } = await supabase.storage
         .from('faces')
@@ -420,7 +420,7 @@ const FaceCapture = () => {
             </h1>
           </div>
           <p className="text-muted-foreground text-lg">
-            Upload your ID and record a 15-second verification video
+            Upload your ID and record a 15-second Biometric Verification
           </p>
         
         </div>
@@ -674,7 +674,7 @@ const FaceCapture = () => {
                   <div className="mt-4 p-3 bg-accent/10 rounded-lg border border-accent/20">
                     <p className="text-sm font-semibold text-accent flex items-center gap-2">
                       <Video className="w-4 h-4" />
-                      Recording Duration: 15 seconds (4 head movements)
+                      Capturing Duration: 15 seconds (4 head movements- Images are taken during movements)
                     </p>
                     <div className="mt-2 flex flex-wrap gap-2">
                       <span className="inline-flex items-center gap-1 text-xs px-2 py-1 bg-white dark:bg-gray-800 rounded-full">
