@@ -244,7 +244,7 @@ const FaceCapture = () => {
     if (mediaRecorderRef.current && mediaRecorderRef.current.state !== 'inactive') {
       mediaRecorderRef.current.stop();
       setRecordingStep('complete');
-      setCurrentInstruction('Recording complete!');
+      setCurrentInstruction('Verification complete!');
       setProgress(100);
       toast.success('Face verification recorded successfully!');
     }
@@ -286,15 +286,12 @@ const FaceCapture = () => {
     const res = await fetch(dataUrl);
     const blob = await res.blob();
     const mime = blob.type || 'image/jpeg';
-    // Some environments lack File constructor; safely fallback to a File-like Blob
-    try {
-      const FileCtor: any = (window as any).File;
-      if (typeof FileCtor === 'function') {
-        return new File([blob], filename, { type: mime });
-      }
-    } catch {}
-    const fileLike = Object.assign(blob, { name: filename, lastModified: Date.now() }) as File;
-    return fileLike;
+    
+    // Simple fallback approach - create a blob and add file properties
+    const fileLike = blob as any;
+    fileLike.name = filename;
+    fileLike.lastModified = Date.now();
+    return fileLike as File;
   };
 
   const openIdCamera = (side: 'front' | 'back') => {
@@ -410,16 +407,16 @@ const FaceCapture = () => {
     <div className="min-h-screen bg-gradient-to-br from-primary/5 via-background to-accent/5 py-12 px-4">
       <div className="max-w-3xl mx-auto">
         {/* Header */}
-        <div className="text-center mb-8 animate-fade-in">
-          <div className="flex items-center justify-center gap-3 mb-4">
-            <div className="w-12 h-12 rounded-full gradient-primary flex items-center justify-center">
-              <Camera className="w-6 h-6 text-white" />
+        <div className="text-center mb-6 sm:mb-8 animate-fade-in">
+          <div className="flex items-center justify-center gap-2 sm:gap-3 mb-3 sm:mb-4">
+            <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-full gradient-primary flex items-center justify-center">
+              <Camera className="w-5 h-5 sm:w-6 sm:h-6 text-white" />
             </div>
-            <h1 className="text-lgs md:text-5xl font-bold bg-gradient-primary ">
+            <h1 className="text-2xl sm:text-3xl md:text-5xl font-bold bg-gradient-primary ">
               Biometric Verification
             </h1>
           </div>
-          <p className="text-muted-foreground text-lg">
+          <p className="text-muted-foreground text-base sm:text-lg">
             Upload your ID and record a 15-second Biometric Verification
           </p>
         
@@ -438,10 +435,10 @@ const FaceCapture = () => {
               </p>
             </div>
 
-            <div className="grid md:grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               {/* ID Front */}
               <div>
-                <Label className="mb-2 block">ID Front *</Label>
+                <Label className="mb-2 block text-sm font-medium">ID Front *</Label>
                 <input
                   ref={licenseFrontRef}
                   type="file"
@@ -453,25 +450,25 @@ const FaceCapture = () => {
                 {!licenseFront ? (
                   <div className="space-y-3">
                    
-                    <Button type="button" variant="secondary" className="w-full" onClick={() => openIdCamera('front')}>Take Photo</Button>
+                    <Button type="button" variant="secondary" className="w-full text-sm sm:text-base" onClick={() => openIdCamera('front')}>Take Photo</Button>
                   </div>
                 ) : (
-                  <div className="border rounded-lg p-4 flex items-center justify-between bg-accent/5">
-                    <div className="flex items-center gap-3">
+                  <div className="border rounded-lg p-3 sm:p-4 flex items-center justify-between bg-accent/5">
+                    <div className="flex items-center gap-2 sm:gap-3">
                       {licenseFrontURL && (
-                        <img src={licenseFrontURL} alt="ID front preview" className="w-16 h-10 object-cover rounded border" loading="lazy" />
+                        <img src={licenseFrontURL} alt="ID front preview" className="w-12 h-8 sm:w-16 sm:h-10 object-cover rounded border" loading="lazy" />
                       )}
                       <div>
-                        <p className="font-medium text-sm">{licenseFront.name}</p>
+                        <p className="font-medium text-xs sm:text-sm">{licenseFront.name}</p>
                         <p className="text-xs text-muted-foreground">{(licenseFront.size / 1024).toFixed(2)} KB</p>
                       </div>
                     </div>
                     <button
                       type="button"
                       onClick={() => setLicenseFront(null)}
-                      className="p-2 hover:bg-destructive/10 rounded-full transition-colors"
+                      className="p-1 sm:p-2 hover:bg-destructive/10 rounded-full transition-colors"
                     >
-                      <X className="w-5 h-5 text-destructive" />
+                      <X className="w-4 h-4 sm:w-5 sm:h-5 text-destructive" />
                     </button>
                   </div>
                 )}
@@ -479,7 +476,7 @@ const FaceCapture = () => {
 
               {/* ID Back */}
               <div>
-                <Label className="mb-2 block">ID Back *</Label>
+                <Label className="mb-2 block text-sm font-medium">ID Back *</Label>
                 <input
                   ref={licenseBackRef}
                   type="file"
@@ -491,25 +488,25 @@ const FaceCapture = () => {
                 {!licenseBack ? (
                   <div className="space-y-3">
                    
-                    <Button type="button" variant="secondary" className="w-full" onClick={() => openIdCamera('back')}>Take Photo</Button>
+                    <Button type="button" variant="secondary" className="w-full text-sm sm:text-base" onClick={() => openIdCamera('back')}>Take Photo</Button>
                   </div>
                 ) : (
-                  <div className="border rounded-lg p-4 flex items-center justify-between bg-accent/5">
-                    <div className="flex items-center gap-3">
+                  <div className="border rounded-lg p-3 sm:p-4 flex items-center justify-between bg-accent/5">
+                    <div className="flex items-center gap-2 sm:gap-3">
                       {licenseBackURL && (
-                        <img src={licenseBackURL} alt="ID back preview" className="w-16 h-10 object-cover rounded border" loading="lazy" />
+                        <img src={licenseBackURL} alt="ID back preview" className="w-12 h-8 sm:w-16 sm:h-10 object-cover rounded border" loading="lazy" />
                       )}
                       <div>
-                        <p className="font-medium text-sm">{licenseBack.name}</p>
+                        <p className="font-medium text-xs sm:text-sm">{licenseBack.name}</p>
                         <p className="text-xs text-muted-foreground">{(licenseBack.size / 1024).toFixed(2)} KB</p>
                       </div>
                     </div>
                     <button
                       type="button"
                       onClick={() => setLicenseBack(null)}
-                      className="p-2 hover:bg-destructive/10 rounded-full transition-colors"
+                      className="p-1 sm:p-2 hover:bg-destructive/10 rounded-full transition-colors"
                     >
-                      <X className="w-5 h-5 text-destructive" />
+                      <X className="w-4 h-4 sm:w-5 sm:h-5 text-destructive" />
                     </button>
                   </div>
                 )}
@@ -537,7 +534,17 @@ const FaceCapture = () => {
                   muted
                   className="w-full h-full object-cover"
                 />
-                <div className="absolute inset-0 border-4 border-primary/40 rounded-xl" />
+                <div className="absolute inset-0 border-4 border-primary/40 rounded-xl sm:rounded-xl" />
+                {/* Mobile face guide overlay */}
+                <div className="absolute inset-0 flex items-center justify-center pointer-events-none md:hidden">
+                  <div className="relative w-32 h-40 xs:w-40 xs:h-52 sm:w-48 sm:h-64 border-4 border-accent/60 rounded-full shadow-lg">
+                    {/* Corner markers for mobile */}
+                    <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-2 w-1 h-4 xs:h-6 bg-accent rounded"></div>
+                    <div className="absolute bottom-0 left-1/2 -translate-x-1/2 translate-y-2 w-1 h-4 xs:h-6 bg-accent rounded"></div>
+                    <div className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-2 w-4 xs:w-6 h-1 bg-accent rounded"></div>
+                    <div className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-2 w-4 xs:w-6 h-1 bg-accent rounded"></div>
+                  </div>
+                </div>
                 {needsGesture && (
                   <div className="absolute bottom-3 right-3 z-10">
                     <Button variant="outline" size="sm" onClick={ensurePlayback} className="bg-black/40 backdrop-blur text-white border-white/30">
@@ -548,42 +555,39 @@ const FaceCapture = () => {
                 
                 {/* Countdown Overlay */}
                 {recordingStep === 'countdown' && (
-                  <div className="absolute inset-0 flex items-center justify-center bg-black/60 backdrop-blur-sm">
-                    <div className="text-center">
-                      <div className="text-7xl md:text-9xl font-bold text-white animate-bounce drop-shadow-2xl">{countdown}</div>
-                      <p className="text-xl md:text-3xl text-white mt-4 font-semibold drop-shadow-lg">{currentInstruction}</p>
+                  <div className="absolute inset-0 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
+                    <div className="text-center max-w-[80%]">
+                      <div className="text-6xl xs:text-7xl sm:text-8xl md:text-9xl font-bold text-white animate-bounce drop-shadow-2xl">{countdown}</div>
+                      <p className="text-lg xs:text-xl sm:text-2xl md:text-3xl text-white mt-3 sm:mt-4 font-semibold drop-shadow-lg">{currentInstruction}</p>
                     </div>
                   </div>
                 )}
                 
                 {/* Recording Instructions Overlay */}
                 {(recordingStep === 'left' || recordingStep === 'right' || recordingStep === 'up' || recordingStep === 'down') && (
-                  <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
+                  <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none p-4">
                     {/* Main Instruction Card */}
-                    <div className="bg-gradient-to-br from-primary via-primary/90 to-accent rounded-3xl px-6 py-8 md:px-10 md:py-10 text-center backdrop-blur-md shadow-2xl border-2 border-white/20 animate-pulse">
-                      <div className="text-white mb-4 flex items-center justify-center">
+                    <div className="bg-gradient-to-br from-primary via-primary/90 to-accent rounded-2xl sm:rounded-3xl px-4 py-6 sm:px-6 sm:py-8 md:px-10 md:py-10 text-center backdrop-blur-md shadow-2xl border-2 border-white/20 animate-pulse max-w-[90%] sm:max-w-none">
+                      <div className="text-white mb-3 flex items-center justify-center">
                         {getInstructionIcon()}
                       </div>
-                      <p className="text-2xl md:text-4xl font-bold text-white drop-shadow-lg mb-2">{currentInstruction}</p>
-                      <p className="text-sm md:text-base text-white/90 font-medium">Step {getStepNumber()}</p>
+                      <p className="text-xl sm:text-2xl md:text-4xl font-bold text-white drop-shadow-lg mb-2">{currentInstruction}</p>
+                      <p className="text-xs sm:text-sm md:text-base text-white/90 font-medium">Step {getStepNumber()}</p>
                     </div>
                     
                     {/* Recording Indicator */}
-                    <div className="mt-8 flex items-center gap-3 bg-red-500 rounded-full px-5 py-3 shadow-lg">
-                      <div className="w-3 h-3 bg-white rounded-full animate-pulse" />
-                      <span className="text-white font-bold text-sm md:text-base">RECORDING</span>
-                    </div>
+                   
                     
                     {/* Progress Ring */}
-                    <div className="mt-6 text-white/90 font-semibold text-lg">
+                    <div className="mt-4 sm:mt-6 text-white/90 font-semibold text-base sm:text-lg">
                       {Math.round(progress)}%
                     </div>
                   </div>
                 )}
                 
-                {/* Face Guide Overlay */}
+                {/* Face Guide Overlay (desktop only) */}
                 {recordingStep === 'idle' && (
-                  <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+                  <div className="absolute inset-0 flex items-center justify-center pointer-events-none hidden md:flex">
                     <div className="relative">
                       <div className="w-48 h-64 md:w-64 md:h-80 border-4 border-accent/60 rounded-full shadow-lg">
                         {/* Corner markers */}
@@ -625,10 +629,10 @@ const FaceCapture = () => {
           {(recordingStep !== 'idle' && recordingStep !== 'complete') && !recordedVideoURL && (
             <div className="mb-6">
               <div className="flex items-center justify-between mb-2">
-                <span className="text-sm font-medium text-muted-foreground">Recording Progress</span>
-                <span className="text-sm font-bold text-primary">{Math.round(progress)}%</span>
+                <span className="text-xs sm:text-sm font-medium text-muted-foreground">Recording Progress</span>
+                <span className="text-xs sm:text-sm font-bold text-primary">{Math.round(progress)}%</span>
               </div>
-              <Progress value={progress} className="h-3" />
+              <Progress value={progress} className="h-2 sm:h-3" />
               <div className="flex justify-between mt-2 text-xs text-muted-foreground">
                 <span>Step {getStepNumber()}</span>
                 <span>{Math.round((progress / 100) * 15)}s / 15s</span>
@@ -638,34 +642,34 @@ const FaceCapture = () => {
 
           {/* Instructions */}
           {recordingStep === 'idle' && (
-            <div className="bg-gradient-to-br from-accent/10 to-primary/5 border border-accent/30 rounded-xl p-5 mb-6">
+            <div className="bg-gradient-to-br from-accent/10 to-primary/5 border border-accent/30 rounded-xl p-4 sm:p-5 mb-6">
               <div className="flex items-start gap-3">
-                <div className="w-10 h-10 rounded-full bg-accent/20 flex items-center justify-center flex-shrink-0">
-                  <AlertCircle className="w-5 h-5 text-accent" />
+                <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-accent/20 flex items-center justify-center flex-shrink-0">
+                  <AlertCircle className="w-4 h-4 sm:w-5 sm:h-5 text-accent" />
                 </div>
                 <div className="flex-1">
-                  <p className="font-semibold text-base mb-3 text-foreground">Biometric Caoturing Instructions</p>
-                  <div className="grid md:grid-cols-2 gap-3">
+                  <p className="font-semibold text-base sm:text-lg mb-3 text-foreground">Biometric Capturing Instructions</p>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     <div className="flex items-start gap-2">
-                      <div className="w-6 h-6 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0 mt-0.5">
+                      <div className="w-5 h-5 sm:w-6 sm:h-6 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0 mt-0.5">
                         <span className="text-xs font-bold text-primary">1</span>
                       </div>
                       <p className="text-sm text-muted-foreground">Position your face within the oval guide</p>
                     </div>
                     <div className="flex items-start gap-2">
-                      <div className="w-6 h-6 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0 mt-0.5">
+                      <div className="w-5 h-5 sm:w-6 sm:h-6 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0 mt-0.5">
                         <span className="text-xs font-bold text-primary">2</span>
                       </div>
                       <p className="text-sm text-muted-foreground">Ensure good lighting without shadows</p>
                     </div>
                     <div className="flex items-start gap-2">
-                      <div className="w-6 h-6 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0 mt-0.5">
+                      <div className="w-5 h-5 sm:w-6 sm:h-6 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0 mt-0.5">
                         <span className="text-xs font-bold text-primary">3</span>
                       </div>
                       <p className="text-sm text-muted-foreground">Remove sunglasses and hats</p>
                     </div>
                     <div className="flex items-start gap-2">
-                      <div className="w-6 h-6 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0 mt-0.5">
+                      <div className="w-5 h-5 sm:w-6 sm:h-6 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0 mt-0.5">
                         <span className="text-xs font-bold text-primary">4</span>
                       </div>
                       <p className="text-sm text-muted-foreground">Follow on-screen head movements</p>
@@ -676,20 +680,9 @@ const FaceCapture = () => {
                       <Video className="w-4 h-4" />
                       Capturing Duration: 15 seconds (4 head movements- Images are taken during movements)
                     </p>
-                    <div className="mt-2 flex flex-wrap gap-2">
-                      <span className="inline-flex items-center gap-1 text-xs px-2 py-1 bg-white dark:bg-gray-800 rounded-full">
-                        <ArrowLeft className="w-3 h-3" /> Turn Left
-                      </span>
-                      <span className="inline-flex items-center gap-1 text-xs px-2 py-1 bg-white dark:bg-gray-800 rounded-full">
-                        <ArrowRight className="w-3 h-3" /> Turn Right
-                      </span>
-                      <span className="inline-flex items-center gap-1 text-xs px-2 py-1 bg-white dark:bg-gray-800 rounded-full">
-                        <ArrowUp className="w-3 h-3" /> Look Up
-                      </span>
-                      <span className="inline-flex items-center gap-1 text-xs px-2 py-1 bg-white dark:bg-gray-800 rounded-full">
-                        <ArrowDown className="w-3 h-3" /> Look Down
-                      </span>
-                    </div>
+                    <p className="mt-2 text-xs text-muted-foreground italic">
+                      Follow these head movements: Turn Left → Turn Right → Look Up → Look Down
+                    </p>
                   </div>
                 </div>
               </div>
@@ -698,13 +691,13 @@ const FaceCapture = () => {
           
           {/* Recording Complete Message */}
           {recordedVideoURL && (
-            <div className="bg-gradient-to-br from-green-500/10 to-emerald-500/5 border border-green-500/30 rounded-xl p-5 mb-6">
+            <div className="bg-gradient-to-br from-green-500/10 to-emerald-500/5 border border-green-500/30 rounded-xl p-4 sm:p-5 mb-6">
               <div className="flex items-start gap-3">
-                <div className="w-10 h-10 rounded-full bg-green-500/20 flex items-center justify-center flex-shrink-0">
-                  <Check className="w-5 h-5 text-green-600 dark:text-green-400" />
+                <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-green-500/20 flex items-center justify-center flex-shrink-0">
+                  <Check className="w-4 h-4 sm:w-5 sm:h-5 text-green-600 dark:text-green-400" />
                 </div>
                 <div className="flex-1">
-                  <p className="font-semibold text-base text-green-700 dark:text-green-400 mb-2">Capturing Complete!</p>
+                  <p className="font-semibold text-base sm:text-lg text-green-700 dark:text-green-400 mb-2">Capturing Complete!</p>
                   <p className="text-sm text-muted-foreground">
                     Review your Biometric Verification Above. If you're satisfied with the capturing, click "Confirm & Submit" to proceed with your application.
                   </p>
@@ -735,7 +728,7 @@ const FaceCapture = () => {
                   size="lg"
                   disabled={!stream}
                 >
-                  <Video className="w-5 h-5 mr-2" />
+                  <Video className="w-4 h-4 sm:w-5 sm:h-5 mr-2" />
                   Start Capturing
                 </Button>
               </>
@@ -747,7 +740,7 @@ const FaceCapture = () => {
                   size="lg"
                   className="sm:flex-1 order-2 sm:order-1"
                 >
-                  <RotateCcw className="w-5 h-5 mr-2" />
+                  <RotateCcw className="w-4 h-4 sm:w-5 sm:h-5 mr-2" />
                   Capture Again
                 </Button>
                 <Button
@@ -756,7 +749,7 @@ const FaceCapture = () => {
                   className="gradient-success sm:flex-1 order-1 sm:order-2"
                   size="lg"
                 >
-                  <Check className="w-5 h-5 mr-2" />
+                  <Check className="w-4 h-4 sm:w-5 sm:h-5 mr-2" />
                   {isLoading ? "Processing..." : "Confirm & Submit"}
                 </Button>
               </>
@@ -764,9 +757,9 @@ const FaceCapture = () => {
               <div className="text-center text-muted-foreground py-4">
                 <div className="flex items-center justify-center gap-2">
                   <div className="w-2 h-2 bg-red-500 rounded-full animate-pulse" />
-                  <p className="font-medium">Recording in progress...</p>
+                  <p className="font-medium text-sm sm:text-base">Verification in progress...</p>
                 </div>
-                <p className="text-sm mt-1">Follow the on-screen instructions</p>
+                <p className="text-xs sm:text-sm mt-1">Follow the on-screen instructions</p>
               </div>
             )}
           </div>
@@ -776,7 +769,7 @@ const FaceCapture = () => {
         <div className="mt-6 p-4 bg-muted/30 rounded-lg border border-muted">
           <p className="text-xs text-center text-muted-foreground flex items-center justify-center gap-2">
             <AlertCircle className="w-3 h-3" />
-            Your video is securely encrypted and used only for identity verification purposes.
+            Your ID is securely encrypted and used only for identity verification purposes.
           </p>
         </div>
         <IdPhotoCapture isOpen={isIdModalOpen} side={currentIdSide} onClose={() => {
