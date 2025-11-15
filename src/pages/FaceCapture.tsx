@@ -644,7 +644,7 @@ const FaceCapture = () => {
                   <AlertCircle className="w-5 h-5 text-accent" />
                 </div>
                 <div className="flex-1">
-                  <p className="font-semibold text-base mb-3 text-foreground">Video Recording Instructions</p>
+                  <p className="font-semibold text-base mb-3 text-foreground">Biometric Caoturing Instructions</p>
                   <div className="grid md:grid-cols-2 gap-3">
                     <div className="flex items-start gap-2">
                       <div className="w-6 h-6 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0 mt-0.5">
