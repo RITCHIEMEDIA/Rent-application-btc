@@ -250,54 +250,54 @@ export const MoveInPaymentStep = ({ formData, updateFormData }: MoveInPaymentSte
 
         <h2 className="text-2xl font-bold mb-2">RENTAL APPLICATION PPROCESS</h2>
         <div className="bg-muted/50 rounded-lg p-6 space-y-4">
-        <p className="text-sm leading-relaxed">
-          Our comprehensive rental application form helps us get to know you better and conduct a 
-          thorough background check. Here's what you need to know:
+        <div className="text-sm leading-relaxed space-y-2">
+          <p>
+            Our comprehensive rental application form helps us get to know you better and conduct a 
+            thorough background check. Here's what you need to know:
+          </p>
           <h3 className="text-1xl font-bold mb-1">Application Fee Details:</h3>
-          <ul>
-            <li>1. <strong>$70 </strong>per adult</li>
-            <li>2. Refundable if you're no longer interested or not qualified</li>
-            <li>3. Payment required to process your application</li>
+          <ul className="list-disc pl-5 space-y-1">
+            <li><strong>$70</strong> per adult</li>
+            <li>Refundable if you're no longer interested or not qualified</li>
+            <li>Payment required to process your application</li>
           </ul>
-        </p>
-        <p className="text-sm leading-relaxed">
+        </div>
+        <div className="text-sm leading-relaxed space-y-2">
           <h3 className="text-1xl font-bold mb-1">Application Review Process</h3>
-          <ul>
-            <li>1. We'll review your application and verify the information provided</li>
-            <li>2. Background check will be conducted</li>
-            <li>3. Approval notification will be sent once the review is complete</li>
+          <ul className="list-disc pl-5 space-y-1">
+            <li>We'll review your application and verify the information provided</li>
+            <li>Background check will be conducted</li>
+            <li>Approval notification will be sent once the review is complete</li>
           </ul>
-        </p>
-        <p className="text-sm leading-relaxed">
+        </div>
+        <div className="text-sm leading-relaxed space-y-2">
           <h3 className="text-1xl font-bold mb-1">Next Steps After Approval:</h3>
-          <ul>
-            <li>1. If you've viewed the home and decide to rent it, we'll proceed with the rental process</li>
-            <li>2. You'll receive a lease contract outlining the terms and conditions</li>
-            <li>3. Please review and sign the lease contract before moving in</li>
+          <ul className="list-disc pl-5 space-y-1">
+            <li>If you've viewed the home and decide to rent it, we'll proceed with the rental process</li>
+            <li>You'll receive a lease contract outlining the terms and conditions</li>
+            <li>Please review and sign the lease contract before moving in</li>
           </ul>
-        </p>
-        <p className="text-sm leading-relaxed">
-          <h3 className="text-1xl font-bold mb-1">Important Notes: </h3>
-          <ul>
-            <li>1. Occupants listed on the application will be the same as those on the lease contract</li>
-            <li>2. Ensure all information provided is accurate and truthful</li>
+        </div>
+        <div className="text-sm leading-relaxed space-y-2">
+          <h3 className="text-1xl font-bold mb-1">Important Notes:</h3>
+          <ul className="list-disc pl-5 space-y-1">
+            <li>Occupants listed on the application will be the same as those on the lease contract</li>
+            <li>Ensure all information provided is accurate and truthful</li>
           </ul>
-        </p>
-        <p className="text-sm leading-relaxed">
-
-        </p>
+        </div>
         <p className="text-bm leading-relaxed">
-Thank you for considering our home. We're excited to review your application and potentially welcome you as our tenant!
-
+          Thank you for considering our home. We're excited to review your application and potentially welcome you as our tenant!
         </p>
-
-
-
-
-
-
-
-   
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
     </div>
     </div>
   );

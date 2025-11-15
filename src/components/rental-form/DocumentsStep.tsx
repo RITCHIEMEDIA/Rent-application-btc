@@ -1,7 +1,8 @@
 import { Label } from "@/components/ui/label";
 import { FormData } from "@/pages/RentalForm";
-import { Upload, File, X } from "lucide-react";
-import { useRef } from "react";
+import { Camera, X } from "lucide-react";
+import { useState } from "react";
+import { IdPhotoCapture } from "./IdPhotoCapture";
 
 interface DocumentsStepProps {
   formData: FormData;

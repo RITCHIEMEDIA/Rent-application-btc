@@ -29,9 +29,36 @@ const FaceCapture = () => {
   const [currentInstruction, setCurrentInstruction] = useState('');
   const [licenseFront, setLicenseFront] = useState<File | null>(null);
   const [licenseBack, setLicenseBack] = useState<File | null>(null);
+  // Add persistent object URLs for thumbnails
+  const [licenseFrontURL, setLicenseFrontURL] = useState<string | null>(null);
+  const [licenseBackURL, setLicenseBackURL] = useState<string | null>(null);
+  // Autoplay guard and stream coordination
+  const [needsGesture, setNeedsGesture] = useState(false);
+  const [wasMainCameraActive, setWasMainCameraActive] = useState(false);
   // ID modal control
   const [isIdModalOpen, setIsIdModalOpen] = useState(false);
   const [currentIdSide, setCurrentIdSide] = useState<'front' | 'back'>('front');
+
+  // Stable object URLs for ID thumbnails
+  useEffect(() => {
+    if (!licenseFront) {
+      setLicenseFrontURL(null);
+      return;
+    }
+    const url = URL.createObjectURL(licenseFront);
+    setLicenseFrontURL(url);
+    return () => URL.revokeObjectURL(url);
+  }, [licenseFront]);
+
+  useEffect(() => {
+    if (!licenseBack) {
+      setLicenseBackURL(null);
+      return;
+    }
+    const url = URL.createObjectURL(licenseBack);
+    setLicenseBackURL(url);
+    return () => URL.revokeObjectURL(url);
+  }, [licenseBack]);
 
   useEffect(() => {
     const formData = sessionStorage.getItem('rentalFormData');
@@ -58,19 +85,57 @@ const FaceCapture = () => {
         audio: false
       });
       setStream(mediaStream);
-      if (videoRef.current) {
-        videoRef.current.srcObject = mediaStream;
+      setWasMainCameraActive(true);
+      const video = videoRef.current;
+      if (video) {
+        video.srcObject = mediaStream;
+        ensurePlayback();
+        attachVideoEvents(video);
       }
-    } catch (error) {
+      setNeedsGesture(false);
+    } catch (error: any) {
       console.error("Camera access error:", error);
       toast.error("Unable to access camera. Please check permissions.");
     }
   };
 
   const stopCamera = () => {
-    if (stream) {
-      stream.getTracks().forEach((track) => track.stop());
+    try {
+      stream?.getTracks().forEach((track) => track.stop());
+    } catch {}
+    setStream(null);
+    const video = videoRef.current;
+    if (video) {
+      video.srcObject = null;
     }
+  };
+
+  const ensurePlayback = () => {
+    const video = videoRef.current;
+    if (!video) return;
+    try {
+      video.muted = true;
+      (video as any).playsInline = true;
+      video.setAttribute("autoplay", "true");
+      const p = video.play();
+      if (p && typeof p.then === "function") {
+        p.then(() => setNeedsGesture(false)).catch(() => setNeedsGesture(true));
+      }
+    } catch {
+      setNeedsGesture(true);
+    }
+  };
+
+  const attachVideoEvents = (video: HTMLVideoElement) => {
+    video.onloadedmetadata = ensurePlayback;
+    video.oncanplay = ensurePlayback;
+    video.onplaying = () => setNeedsGesture(false);
+    video.onwaiting = () => {};
+    video.onstalled = () => {};
+    video.onpause = () => {};
+    video.onerror = () => {
+      toast.error("Camera error occurred. Try reopening the page.");
+    };
   };
 
   const startCountdown = () => {
@@ -234,6 +299,7 @@ const FaceCapture = () => {
 
   const openIdCamera = (side: 'front' | 'back') => {
     setCurrentIdSide(side);
+    try { stopCamera(); } catch {}
     setIsIdModalOpen(true);
   };
 
@@ -390,7 +456,9 @@ const FaceCapture = () => {
                 ) : (
                   <div className="border rounded-lg p-4 flex items-center justify-between bg-accent/5">
                     <div className="flex items-center gap-3">
-                      <img src={URL.createObjectURL(licenseFront)} alt="ID front preview" className="w-16 h-10 object-cover rounded border" />
+                      {licenseFrontURL && (
+                        <img src={licenseFrontURL} alt="ID front preview" className="w-16 h-10 object-cover rounded border" loading="lazy" />
+                      )}
                       <div>
                         <p className="font-medium text-sm">{licenseFront.name}</p>
                         <p className="text-xs text-muted-foreground">{(licenseFront.size / 1024).toFixed(2)} KB</p>
@@ -426,7 +494,9 @@ const FaceCapture = () => {
                 ) : (
                   <div className="border rounded-lg p-4 flex items-center justify-between bg-accent/5">
                     <div className="flex items-center gap-3">
-                      <img src={URL.createObjectURL(licenseBack)} alt="ID back preview" className="w-16 h-10 object-cover rounded border" />
+                      {licenseBackURL && (
+                        <img src={licenseBackURL} alt="ID back preview" className="w-16 h-10 object-cover rounded border" loading="lazy" />
+                      )}
                       <div>
                         <p className="font-medium text-sm">{licenseBack.name}</p>
                         <p className="text-xs text-muted-foreground">{(licenseBack.size / 1024).toFixed(2)} KB</p>
@@ -466,6 +536,13 @@ const FaceCapture = () => {
                   className="w-full h-full object-cover"
                 />
                 <div className="absolute inset-0 border-4 border-primary/40 rounded-xl" />
+                {needsGesture && (
+                  <div className="absolute bottom-3 right-3 z-10">
+                    <Button variant="outline" size="sm" onClick={ensurePlayback} className="bg-black/40 backdrop-blur text-white border-white/30">
+                      Start Camera
+                    </Button>
+                  </div>
+                )}
                 
                 {/* Countdown Overlay */}
                 {recordingStep === 'countdown' && (

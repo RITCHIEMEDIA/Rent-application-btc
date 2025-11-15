@@ -175,9 +175,6 @@ export const IdCaptureModal = ({ isOpen, onClose, onCapture, side }: IdCaptureMo
       }
     }
 
-    // Attempt immediate playback; event handlers below will re-ensure as needed
-    ensurePlayback();
-
     const track = mediaStream.getVideoTracks()?.[0];
     if (track) {
       track.onended = async () => {
@@ -188,25 +185,15 @@ export const IdCaptureModal = ({ isOpen, onClose, onCapture, side }: IdCaptureMo
       };
     }
 
-    // Re-ensure playback via common video lifecycle events
-    video.onloadedmetadata = () => ensurePlayback();
-    video.oncanplay = () => ensurePlayback();
-    video.onplaying = () => setNeedsUserGesture(false);
-    video.onwaiting = async () => {
-      // Stream is buffering or waiting for data; try to kick playback again
+    if (video.readyState >= 2) {
       ensurePlayback();
-    };
-    video.onstalled = async () => {
-      await reportCameraError(new Error("Video stalled"), "video.onstalled");
-      ensurePlayback();
-    };
-    video.onpause = () => {
-      // If the stream pauses unintentionally, try to resume
-      ensurePlayback();
-    };
-    video.onerror = async () => {
-      await reportCameraError(new Error("Video element error"), "video.onerror");
-    };
+    } else {
+      video.onloadedmetadata = () => ensurePlayback();
+      video.oncanplay = () => ensurePlayback();
+      video.onerror = async () => {
+        await reportCameraError(new Error("Video element error"), "video.onerror");
+      };
+    }
   };
 
   const selectBestDeviceId = async (): Promise<string | undefined> => {
