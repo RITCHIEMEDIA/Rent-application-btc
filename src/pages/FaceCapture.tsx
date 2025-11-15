@@ -319,6 +319,8 @@ const FaceCapture = () => {
       setLicenseBack(file);
     }
     setIsIdModalOpen(false);
+    // Restart main camera after ID capture is complete
+    startCamera();
   };
 
   const confirmCapture = async () => {
@@ -777,7 +779,11 @@ const FaceCapture = () => {
             Your video is securely encrypted and used only for identity verification purposes.
           </p>
         </div>
-        <IdPhotoCapture isOpen={isIdModalOpen} side={currentIdSide} onClose={() => setIsIdModalOpen(false)} onCapture={handleIdCaptured} />
+        <IdPhotoCapture isOpen={isIdModalOpen} side={currentIdSide} onClose={() => {
+          setIsIdModalOpen(false);
+          // Restart main camera when ID modal is closed
+          startCamera();
+        }} onCapture={handleIdCaptured} />
       </div>
     </div>
   );
